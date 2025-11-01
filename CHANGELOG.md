@@ -1,0 +1,71 @@
+# Changelog
+
+## 2025-11-01
+- Initial Codex planning session (“Ultrathink” brief) for Dad’s voice chat assistant vca1.0.
+- Documented architecture, memory strategy, and RAG platform options in `vca1.0-implementation-plan.md`.
+- Noted Home Assistant role, guardrails expectations, and preference for voice activation over push-to-talk.
+- Captured decision clarifications (wake-word options, pack definitions, HA vs. n8n automation split, PC-first STT/TTS) in `vca1.0-implementation-plan.md`.
+- Logged firm decisions: Home Assistant hosts wake-word & Assist pipeline, AnythingLLM chosen (Docker quickstart documented for future stand-up).
+
+## 2025-11-01 (Session 2)
+- Logged locked decisions (HA Assist wake-word host, AnythingLLM chosen) and documented Docker stand-up steps in `vca1.0-implementation-plan.md`.
+
+## 2025-11-01 (Session 3)
+- **Objective**: Install Docker and Home Assistant Container to complete Phase 0 (Environment Preparation).
+- **Context**: Computer was reset; Docker needs fresh installation on WSL2 (Ubuntu, Linux 6.6.87.2-microsoft-standard-WSL2).
+- **Permission strategy decided**: Developer (Mike) gets root access via sudo; Dad user added to docker group for non-root container access to avoid permission issues during testing.
+- **Testing milestones extracted**: Analyzed `vca1.0-implementation-plan.md` to identify all 6 phases, 6-step milestone sequence, and phase-specific testing checkpoints.
+- **Documentation created**: `ha-docker-installation-plan.md` contains comprehensive installation plan, testing roadmap, priority packs structure, container management commands, and network topology.
+- **Key decisions**:
+  - Home Assistant deployment method: Container (Docker) rather than HAOS for flexibility and integration with other containers (AnythingLLM, n8n).
+  - Network mode: Host network for device discovery and easy access at `http://localhost:8123`.
+  - Configuration location: `/opt/homeassistant/config` for persistent storage.
+  - Timezone: Pacific/Auckland (NZ) for Dad's location.
+  - Auto-restart policy: `unless-stopped` to survive PC reboots.
+- **Phase 0 completion requirements documented**:
+  - Docker installation and verification
+  - Home Assistant container deployment
+  - User onboarding (Mike admin + Dad limited user)
+  - Long-Lived Access Token generation (session manager, n8n, development)
+  - Node 20 installation (pending)
+  - API key provisioning for LLM/TTS (pending)
+- **Next phases prepared**: Installation plan includes post-setup steps for Phase 1 (Assist pipeline with Whisper/Piper/openWakeWord), Phase 3 (AnythingLLM deployment), and Phase 5 (n8n automation restoration).
+- **Installation completed**:
+  - Docker Engine 28.5.1 with Compose v2.40.3 confirmed working (was pre-installed)
+  - Fixed Docker credential helper issue (removed desktop.exe reference)
+  - Home Assistant 2025.10.4 deployed successfully in container
+  - Container ID: `9f67751192b2`, running with `unless-stopped` restart policy
+  - Web UI accessible at `http://localhost:8123` (HTTP 302, ready for onboarding)
+  - Configuration directory: `/home/indigo/homeassistant/config/`
+  - Database initialized, timezone set to Pacific/Auckland (NZ)
+- **Phase 0 Status**: ✅ Infrastructure complete (Docker + HA), ⏳ Pending user tasks (onboarding wizard, Node 20, API keys)
+- **User completed Phase 0 tasks**:
+  - ✅ Home Assistant onboarding wizard finished
+  - ✅ Created Mike VCA (admin) and Dad VCA (limited) user accounts
+  - ✅ Generated 3 Long-Lived Access Tokens (Session Manager, Development, n8n)
+  - ✅ OpenAI API key provisioned (for LLM + STT/TTS)
+- **Hardware analysis completed**:
+  - Analyzed PC specs: GTX 970 GPU (4GB VRAM), i7-4770 CPU, 7.7GB RAM, CUDA 12.6
+  - **Key finding**: PC is well-suited for local STT/TTS (GTX 970 can run Whisper Small at 3-5x realtime)
+  - Documented comprehensive STT/TTS analysis in `stt-tts-hardware-analysis.md`
+- **STT/TTS strategy decided**:
+  - **Phase 1-2 (Now)**: Use OpenAI Whisper + TTS APIs (cloud, quick MVP, ~$20-40/month)
+  - **Phase 3-4 (Future)**: Transition to local Whisper Small (GPU) + Piper TTS with cloud fallback (~$2-5/month)
+  - **Rationale**: GTX 970 makes local viable; start cloud for speed, migrate for privacy/cost
+- **Phase 0 completion status**: ⚡ 95% complete
+  - ✅ All critical infrastructure ready (Docker, HA, API keys, STT/TTS plan)
+  - ⏳ Remaining: Node.js 20 installation, network connectivity test (~15-20 min)
+  - ✅ Ready to begin Phase 1 (Audio & Wake Pipeline) development
+- **Critical design requirement identified**:
+  - Dad's speech is sometimes slurred and unclear for human listeners
+  - STT model selection will require experimentation to find best fit
+  - **Decision**: Build modular STT/TTS pipeline architecture for easy model swapping
+- **Modular pipeline architecture documented**:
+  - Created `modular-stt-tts-pipeline-design.md` with comprehensive design
+  - Provider abstraction layer (STTProvider, TTSProvider base classes)
+  - Configuration-driven model selection (change via config.yaml, not code)
+  - A/B testing framework for comparing STT models on identical audio samples
+  - Testing protocol specific to Dad's slurred speech patterns
+  - Supports: OpenAI Whisper API, Local Whisper (GPU), Deepgram, Vosk, others
+  - Success metric: Dad's ability to be understood > cost/latency/other factors
+- **System specs corrected**: 16 GB total RAM (7.7 GB allocated to WSL2, can be increased if needed)

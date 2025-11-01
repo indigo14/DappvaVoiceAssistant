@@ -1,0 +1,35 @@
+Document any project wide info in CHANGELOG.md. This is the first chat session in this repo, I want to use CHANGELOG.md to keep subsequent chats informed of project-wide considerations.
+
+
+This prompt worked well with codex (ultrathink) as initial prompt. Resulted in: /home/indigo/my-project3/Dappva/vca1.0-implementation-plan.md
+vca1.0-implementation-plan being written
+no code atm
+Please read:
+AGENTS.md
+voiceAssistantScripts/dad_profile_pre_filled_voice_assistant.md
+
+dad_profile_pre_filled_voice_assistant.md: I want to use this 'chat script' as a first implementation of a voice chat assistant (vca).
+Please provide a plan to implement a vca with memory according to requirements
+Please document your thoughts and findings into .md
+Document any project wide info in CHANGELOG.md. This is the first chat session in this repo, I want to use CHANGELOG.md to keep subsequent chats informed of project-wide considerations.
+
+Ultrathink
+
+Notes to self:
+* for .md codex writes lowercase, claude upper. They should stick to same convention.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

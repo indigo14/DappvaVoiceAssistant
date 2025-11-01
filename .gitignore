@@ -1,0 +1,101 @@
+# Sensitive Files - NEVER COMMIT
+credentials/*
+!credentials/README.md
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.p12
+config/secrets.yaml
+
+# Allow .env.example template
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Node.js (for n8n)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Data & Audio Samples (may be large)
+data/audio_samples/*.wav
+data/audio_samples/*.mp3
+data/stt_comparisons.jsonl
+
+# Home Assistant
+homeassistant/
+.HA_VERSION
+home-assistant_v2.db*
+
+# Model Files (too large for git)
+*.bin
+*.pt
+*.pth
+models/
+
+# Docker
+.docker/
+
+# OS
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
