@@ -12,6 +12,11 @@ config/secrets.yaml
 # Allow .env.example template
 !.env.example
 
+# Documentation with API keys (keep local only)
+InstallHomeAssistantCrash/
+phase-1-architecture-clarification.md
+phase-1-ui-configuration-steps.md
+
 # Python
 __pycache__/
 *.py[cod]
@@ -85,6 +90,9 @@ home-assistant_v2.db*
 *.pt
 *.pth
 models/
+vosk-model-*/
+vosk-model-*.zip
+wyoming-data/
 
 # Docker
 .docker/

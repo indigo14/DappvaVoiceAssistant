@@ -2,54 +2,65 @@
 # Install with: pip install -r requirements.txt
 
 # ================================
-# Core Dependencies (Phase 0-1)
+# Core Dependencies - Phase 1
 # ================================
+# These are the actively used dependencies in session_manager/
 
-# OpenAI API (STT, TTS, LLM)
-openai>=1.0.0
+# Web Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+websockets==12.0
+python-multipart==0.0.6
 
-# Home Assistant API Client
-homeassistant>=2024.0.0
+# AI/ML Services
+openai==1.10.0
 
 # Audio Processing
-# (To be added as needed in Phase 1)
+webrtcvad==2.0.10
+numpy==1.26.3
+scipy==1.11.4
+
+# Configuration & Environment
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Logging & Utilities
+colorlog==6.8.2
+aiofiles==23.2.1
 
 # ================================
-# Optional Dependencies (Phase 3+)
+# Optional: Testing & Development
 # ================================
-
-# Alternative STT Providers
-# deepgram-sdk>=3.0.0
-# google-cloud-speech>=2.0.0
-# azure-cognitiveservices-speech>=1.0.0
-
-# Local STT (Whisper)
-# faster-whisper>=0.10.0  # GPU-accelerated Whisper
-
-# Local TTS (Piper)
-# piper-tts>=1.0.0
-
-# Audio Processing & VAD
-# webrtcvad>=2.0.0
-# sounddevice>=0.4.0
-# soundfile>=0.12.0
-# numpy>=1.24.0
-
-# Configuration Management
-# pyyaml>=6.0
-# python-dotenv>=1.0.0
-
-# Testing & Development
 # pytest>=7.0.0
 # pytest-asyncio>=0.21.0
 # black>=23.0.0
 # flake8>=6.0.0
 
 # ================================
+# Optional: Alternative Providers (Phase 3+)
+# ================================
+# Alternative STT Providers
+# deepgram-sdk>=3.0.0
+# google-cloud-speech>=2.0.0
+# azure-cognitiveservices-speech>=1.0.0
+
+# Local STT (Whisper)
+# faster-whisper>=0.10.0
+
+# Local TTS (Piper)
+# piper-tts>=1.0.0
+
+# ================================
 # Instructions
 # ================================
-# 1. Uncomment dependencies as they become needed
-# 2. Pin versions for production deployments
-# 3. Use virtual environment: python -m venv venv
-# 4. Activate: source venv/bin/activate (Linux/Mac) or venv\Scripts\activate (Windows)
-# 5. Install: pip install -r requirements.txt
+# 1. Use virtual environment: python -m venv venv
+# 2. Activate: source venv/bin/activate (Linux/Mac) or venv\Scripts\activate (Windows)
+# 3. Install: pip install -r requirements.txt
+# 4. For production, all versions are pinned for reproducibility
+
+# ================================
+# Notes
+# ================================
+# - Home Assistant integration was removed in architecture revision (see ARCHITECTURE-REVISED-NO-HA.md)
+# - This matches session_manager/requirements.txt which is the active implementation
+# - Audio format: 16kHz mono PCM16 input, 24kHz MP3 output

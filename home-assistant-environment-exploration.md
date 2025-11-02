@@ -16,7 +16,7 @@
    - Create dedicated “Dad VCA” user with limited dashboard scoped to assistant status + quick actions.
    - Create dedicated “Mike VCA” user with unlimited dashboard scoped to administrator  status + quick actions.
 2. **Expose Automation Hooks for Agents**  
-   - Define Assist intents and HA scripts for common routines (lights, reminders, check-ins) so coding agents can call REST/webhook endpoints without broad admin credentials.  
+   - Define Assist intents and HA scripts for common routines (reminders, check-ins) so coding agents can call REST/webhook endpoints without broad admin credentials.  
    - Configure Long-Lived Access Tokens scoped to automations for the session manager and n8n.
 3. **Agent Runtime Sandbox**  
    - Run VCA session manager + coding agents in Docker/Podman on same host.  
