@@ -1,0 +1,1000 @@
+001. This document chronicles VCA 1.0, a voice conversation assistant crafted for Dad's daily support.
+002. The project blends a custom Android client with a Python Session Manager running inside WSL2.
+003. Development began on 2025-11-01 with an Ultrathink planning session that set the tone for rapid iteration.
+004. The assistant prioritizes hands-free operation so Dad never needs to fumble with screens or buttons.
+005. Safety, consent, and clarity guide every architectural choice captured across the documentation set.
+006. A modular STT and TTS pipeline makes it possible to test cloud and local models without code churn.
+007. n8n and AnythingLLM remain planned integrations, ensuring reminders and contextual answers stay grounded.
+008. The project team adopted a hybrid workflow, coding from Android Studio on Windows while building in WSL2.
+009. Session logs and maintenance guides provide continuity so any teammate can resume work midstream.
+010. A Dad-specific persona prompt anchors conversational tone, making interactions respectful and brief.
+011. Voice capture starts on a Samsung A05, streams through WebSocket, and circles back as synthesized speech.
+012. Latency targets aim for under ten seconds, keeping the interaction natural and dependable.
+013. Each session uncovered resilience gaps, and the living documentation now captures remediation paths.
+014. Local Whisper Small on a GTX 970 GPU remains the north star for affordable, private on-device speech.
+015. OpenAI Whisper and TTS deliver the current MVP, trading cost for speed while the local stack matures.
+016. Wake-word detection remains optional for testing because tap-to-talk accelerates validation cycles.
+017. The project respects Dad's routine by logging wake events and offering quick stop phrases.
+018. A dedicated backup guide records tarball exports so the WSL environment stays recoverable.
+019. Gradle sync issues taught the team to separate IDE problems from command-line reliability.
+020. Testing harnesses now include mock providers so latency analytics never block on cloud usage.
+021. Contradictory Home Assistant documents remain archived for traceability but no longer drive design.
+022. Session 6 achieved the first full voice loop, proving the pipeline from phone mic to TTS playback.
+023. Session 8 delivered a maintenance tome and highlighted protocol gaps the Android client must fix.
+024. This 1000-line history preserves not only accomplishments but also the rationale behind every detour.
+025. The narrative follows the repository structure, surfacing the knowledge encoded across markdown assets.
+026. Dad, also known as Warren, remains the primary beneficiary whose comfort defines success metrics.
+027. Michael stewards architecture decisions, balancing rapid delivery with long-term maintainability.
+028. Agents and coding assistants rely on AGENTS.md and quick references to play nicely inside WSL.
+029. The persona brief enforces short replies with numbered options to keep cognitive load low.
+030. Safety pack rules insist the assistant escalates through scripted contact chains when Dad requests help.
+031. Save and forget phrases put Dad in charge of memory persistence, reinforcing the consent contract.
+032. Daily orientation summaries aim to reassure Dad with weather, plans, and gentle reminders each evening.
+033. Permission strategies give Mike elevated access while Dad can run containers without risky sudo commands.
+034. The project accounts for slurred speech by logging STT confidence and designing easy provider swaps.
+035. Documentation calls out the push-to-talk preference yet keeps wake-word pathways ready for field trials.
+036. Headset quirks motivate the inclusion of Tech How-To guides that explain reconnection in three steps.
+037. Accessibility notes steer UI choices toward high contrast and clear audio feedback.
+038. Audit logs and weekly digests equip Michael to monitor the assistant without invading privacy.
+039. Quiet hours and check-in schedules ensure automations respect Dad's rhythm instead of interrupting rest.
+040. The project culture values reversible decisions so Dad can pause the assistant whenever he wants.
+041. The development machine runs Windows 10 with WSL2 Ubuntu, exposing Linux performance inside a familiar UI.
+042. Docker Engine 28.5.1 with Compose v2.40.3 underpins containerized services that once hosted Home Assistant.
+043. An NVIDIA GTX 970 GPU with 4GB of VRAM enables local Whisper Small to run at roughly three to five times realtime.
+044. The Intel i7-4770 CPU contributes eight threads at 3.4 gigahertz, supporting concurrent Python workloads.
+045. OpenAI connectivity remains active via API keys stored securely under the credentials directory.
+046. WSL2 networking requires manual port proxy commands so the phone can reach services on port 5000.
+047. PowerShell snippets in the network connectivity guide prevent regressions after Windows updates.
+048. Backups land on external drives, capturing Ubuntu tarballs that mirror the workspace state as of 2025-11-02.
+049. Node.js 22.16.0 is already installed, exceeding the Phase 0 requirement for Node 20.
+050. Android development uses Gradle 8.9, Kotlin 2.0.21, and the latest Compose libraries.
+051. The A05 test device exposes developer options, allowing USB debugging and logcat streaming.
+052. Ripgrep remains the preferred search utility because it respects WSL filesystem performance constraints.
+053. A Windows firewall rule named VCA Session Manager permits inbound port 5000 traffic.
+054. The project uses Python 3.12.3 inside a virtual environment to isolate Session Manager dependencies.
+055. Latency scripts rely on asyncio and precise timestamps to benchmark STT, LLM, and TTS segments.
+056. Android Studio lives on the Windows side while builds execute through WSL to avoid sync failures.
+057. WSLg is kept as a contingency in case native Android Studio on Linux becomes necessary.
+058. ADB commands reference the Windows SDK path and still execute from within the WSL shell.
+059. The environment exploration guide originally positioned Home Assistant as a central orchestrator.
+060. After the pivot, Home Assistant containers were stopped and removed to reduce complexity.
+061. Docker data directories such as wyoming-data remain as optional scaffolding if Wyoming returns.
+062. The modular pipeline design references GPU utilization to justify future on-device deployments.
+063. WSL tar backups log commit hashes so environment snapshots map to repository history.
+064. CLAUDE.md and AGENTS.md equip AI collaborators with the same environmental guardrails as humans.
+065. Gradle caches were purged during the sync repairs, proving that daemon state impacts IDE behavior.
+066. The current architecture removes Home Assistant from the core loop, favoring a custom Android client.
+067. Audio begins on the phone, passes through WebSocket, and arrives at the Session Manager for processing.
+068. Voice Activity Detection using webrtcvad determines when Dad has finished speaking.
+069. OpenAI Whisper handles speech-to-text conversion while the project evaluates future local replacements.
+070. Text-to-speech relies on OpenAI TTS, playing back synthesized responses through the phone speaker.
+071. Session state management orchestrates transitions between listening, processing, and responding.
+072. Stop phrase detection catches cues such as 'that's all' to terminate sessions early.
+073. The architecture anticipates an LLM provider abstraction so Anthropic or OpenAI models can plug in.
+074. Conversation history remains a planned enhancement so future responses can reference recent turns.
+075. Wake-word detection code exists on Android but awaits Vosk model installation for activation.
+076. n8n integration remains in the roadmap to bridge reminders, escalations, and messaging workflows.
+077. AnythingLLM will eventually host knowledge packs for Tech How-Tos and daily orientation content.
+078. Priority Packs categorize memories into orientation, contacts, safety, and technical guidance.
+079. The modular design allows STTProviderFactory and TTSProviderFactory to instantiate providers by name.
+080. Configuration sits in YAML, enriched by environment variables so secrets never hard-code.
+081. Latency monitoring instrumentation logs each stage, giving insight into where runtime slows.
+082. Mock providers let developers test the pipeline without hitting OpenAI rate limits.
+083. Android app modules separate concerns across recording, playback, WebSocket, wake-word, service, and UI.
+084. Foreground service notifications keep Android complying with background audio policies.
+085. Tap-to-talk interface ensures testers can run flows before the wake-word feature fully matures.
+086. Port forwarding bridges the WSL network boundary, exposing the FastAPI WebSocket externally.
+087. The data flow diagram in the revised architecture doc captures phone to Session Manager to automations.
+088. Session Manager health endpoint reports component status including STT, TTS, VAD, and session layer.
+089. Redaction middleware protects sensitive information before storage whenever memory features arrive.
+090. Orientation loops will eventually summarize each day, subject to Dad's confirmation.
+091. The pipeline intentionally echoes transcripts back during early testing to validate end-to-end integrity.
+092. Stop phrases from Android still need validation to confirm the phone relays them promptly.
+093. Battery optimization sits in the backlog so the foreground service does not hold wakelocks unnecessarily.
+094. Performance optimization aims to trim redundant transitions, especially during STT-to-TTS handoff.
+095. The modular pipeline design enumerates fallback strategies should primary providers degrade.
+096. Session Manager logging uses color-coded output to distinguish info, warning, and error states.
+097. Configurable silence timeout currently sits at two seconds, balancing responsiveness and accuracy.
+098. Future conversation state persistence will enable multi-turn context required for richer dialogue.
+099. The audio buffer collects PCM frames until VAD signals that speech has ended.
+100. Stop phrase detection scans transcripts for canonical phrases configured in YAML.
+101. Session cleanup removes stale sessions, preventing memory leaks during long-running operation.
+102. The architecture plan includes webhook endpoints so automations can trigger out-of-band events.
+103. Android's WakeWordDetector integrates Vosk but expects model assets to be available on external storage.
+104. MainActivity coordinates permissions for RECORD_AUDIO, FOREGROUND_SERVICE, and POST_NOTIFICATIONS.
+105. VoiceAssistantService orchestrates recorder, WebSocket client, and player as a cohesive pipeline.
+106. WebSocketClient handles reconnects and message dispatch, translating between text and binary frames.
+107. AudioRecorder captures 16kHz PCM16 frames sized at 960 bytes per 30-millisecond chunk.
+108. AudioPlayer streams MP3 responses by leveraging Android's MediaPlayer utility.
+109. Latency capture scripts segment total time into STT, LLM, and TTS contributions for precision tuning.
+110. Mock providers supply deterministic responses, enabling regression tests without network dependency.
+111. Session Manager factories instantiate providers based on the stt_provider and tts_provider settings.
+112. Configuration supports toggling to mock providers during load testing or demo rehearsals.
+113. Provider switching fix in Session 8 ensures mock and OpenAI configs load the correct parameters.
+114. Upcoming LLM integration will introduce a new module under session_manager/llm for provider logic.
+115. The architecture doc memorializes the decision to retire Home Assistant as a mandatory component.
+116. Wyoming-related guides persist as historical references in case alternative wake engines resurface.
+117. Android app network security config permits cleartext traffic to the development server for now.
+118. Session Manager uses FastAPI's WebSocket route ws://host:5000/audio-stream for bidirectional audio.
+119. Health endpoints respond with JSON including component readiness and active session counts.
+120. Stop phrase detection expands beyond 'that's all' to include 'goodbye' and similar polite closers.
+121. Conversation history placeholder ensures the design anticipates multi-turn transcripts.
+122. The architecture envisions memory packs stored in databases, though implementation remains future work.
+123. Android service acquires a wake lock to keep the CPU alive while processing live audio.
+124. Notification channel creation satisfies Android 13 foreground service requirements.
+125. Tap-to-talk button toggles between blue and red states to reflect listening status in the UI.
+126. Latency measurement instrumentation records unique session IDs to correlate transcripts and audio.
+127. Provider abstraction opens the door for ElevenLabs or Coqui TTS experiments if needed.
+128. Fallback logic will eventually re-route to cloud providers when local models hit quality thresholds.
+129. Current configuration uses OpenAI's whisper-1 for STT and tts-1 with Nova voice for playback.
+130. Phase 0 – Environment Preparation currently carries a completed status within the roadmap.
+131. Phase 0 goal: Install Docker guides the team's near-term planning decisions.
+132. Phase 0 goal: Deploy infrastructure guides the team's near-term planning decisions.
+133. Phase 0 goal: Provision credentials guides the team's near-term planning decisions.
+134. Phase 0 goal: Assess hardware guides the team's near-term planning decisions.
+135. Phase 0 goal: Validate network connectivity guides the team's near-term planning decisions.
+136. Phase 0 note: Installed Docker Engine and verified hello-world runs without errors.
+137. Phase 0 note: Deployed Home Assistant in a container with host networking for initial experiments.
+138. Phase 0 note: Generated long-lived access tokens for Session Manager, development, and n8n workflows.
+139. Phase 0 note: Analyzed GTX 970 capabilities to confirm local Whisper feasibility.
+140. Phase 0 note: Captured backup strategy using wsl --export for disaster recovery.
+141. Phase 0 note: Provisioned OpenAI API keys to unblock early speech experiments.
+142. Phase 0 note: Added Dad and Michael accounts to Home Assistant before the pivot occurred.
+143. Phase 0 note: Documented modular STT/TTS strategy to future-proof provider choices.
+144. Phase 1 – Audio and Wake Pipeline currently carries a completed status within the roadmap.
+145. Phase 1 goal: Ship Session Manager guides the team's near-term planning decisions.
+146. Phase 1 goal: Deliver Android client guides the team's near-term planning decisions.
+147. Phase 1 goal: Exercise VAD logic guides the team's near-term planning decisions.
+148. Phase 1 goal: Implement stop phrases guides the team's near-term planning decisions.
+149. Phase 1 goal: Track latency guides the team's near-term planning decisions.
+150. Phase 1 note: Session Manager reached end-to-end audio streaming with echo responses.
+151. Phase 1 note: Android app implemented WebSocket streaming, tap-to-talk controls, and playback.
+152. Phase 1 note: Wake-word capability remains staged pending Vosk model delivery.
+153. Phase 1 note: Stop phrase detection works server-side but awaits phone validation.
+154. Phase 1 note: Session 6 demonstrated round-trip latency between ten and seventeen seconds.
+155. Phase 1 note: Session 7 instrumentation prepares the pipeline for future wake-word improvements.
+156. Phase 2 – LLM Integration currently carries a in progress status within the roadmap.
+157. Phase 2 goal: Integrate conversational model guides the team's near-term planning decisions.
+158. Phase 2 goal: Maintain latency budget guides the team's near-term planning decisions.
+159. Phase 2 goal: Persist conversation history guides the team's near-term planning decisions.
+160. Phase 2 goal: Support provider toggles guides the team's near-term planning decisions.
+161. Phase 2 note: Latency monitoring system completed before turning on generative models.
+162. Phase 2 note: Provider switching fix ensures mock and OpenAI modes configure correctly.
+163. Phase 2 note: Android protocol bug currently blocks live latency measurements.
+164. Phase 2 note: Session 8 maintenance guide lays groundwork for upcoming LLM modules.
+165. Phase 3 – Memory Foundation currently carries a upcoming status within the roadmap.
+166. Phase 3 goal: Implement pack schemas guides the team's near-term planning decisions.
+167. Phase 3 goal: Build CRUD APIs guides the team's near-term planning decisions.
+168. Phase 3 goal: Apply redaction filters guides the team's near-term planning decisions.
+169. Phase 3 goal: Schedule daily summaries guides the team's near-term planning decisions.
+170. Phase 3 note: Priority packs A, C, D, and I already designed in implementation plan.
+171. Phase 3 note: Save and forget flows scripted with consent-first wording.
+172. Phase 3 note: Vector database options documented for semantic retrieval.
+173. Phase 4 – Retrieval Augmentation currently carries a upcoming status within the roadmap.
+174. Phase 4 goal: Connect vector store guides the team's near-term planning decisions.
+175. Phase 4 goal: Integrate retrieval with chat guides the team's near-term planning decisions.
+176. Phase 4 goal: Expose transparency prompts guides the team's near-term planning decisions.
+177. Phase 4 note: AnythingLLM and Flowise identified as ready-made RAG platforms.
+178. Phase 4 note: Query planners will help differentiate quick facts from detailed walkthroughs.
+179. Phase 5 – Automations and Integrations currently carries a upcoming status within the roadmap.
+180. Phase 5 goal: Restore n8n flows guides the team's near-term planning decisions.
+181. Phase 5 goal: Wire notification routing guides the team's near-term planning decisions.
+182. Phase 5 goal: Implement escalation safeguards guides the team's near-term planning decisions.
+183. Phase 5 note: n8n workflows previously supported reminders and escalations before the PC reset.
+184. Phase 5 note: Home Assistant remains optional but documented in case device control becomes relevant.
+185. Phase 6 – Hardening and UX Polish currently carries a upcoming status within the roadmap.
+186. Phase 6 goal: Conduct usability sessions guides the team's near-term planning decisions.
+187. Phase 6 goal: Optimize latency guides the team's near-term planning decisions.
+188. Phase 6 goal: Add monitoring alerts guides the team's near-term planning decisions.
+189. Phase 6 goal: Prepare launch documentation guides the team's near-term planning decisions.
+190. Phase 6 note: Usability testing with Dad will validate real-world comfort and latency expectations.
+191. Phase 6 note: Offline fallbacks plan to use local models when connectivity drops.
+192. Phase 6 note: Documentation handoff will formalize operational runbooks.
+193. Session 1 on 2025-11-01 focused on Ultrathink planning and objective setting.
+194. Session 1 outcome: Documented the implementation plan covering phases, packs, and guardrails.
+195. Session 1 outcome: Defined the voice activation requirement eliminating push-to-talk dependencies long term.
+196. Session 1 outcome: Selected AnythingLLM as the baseline RAG platform for future knowledge ingestion.
+197. Session 1 outcome: Logged initial wake-word and automation decisions inside the changelog.
+198. Session 1 blocker: Needed validation that hardware could support local speech models.
+199. Session 1 blocker: Required confirmation that backups could protect WSL investments.
+200. Session 1 follow-up: Gather hardware metrics to inform STT/TTS strategy.
+201. Session 1 follow-up: Draft documentation standards to keep future notes consistent.
+202. Session 1 status feeds into the continuing roadmap for VCA 1.0.
+203. Session 2 on 2025-11-01 focused on Decision locking for infrastructure.
+204. Session 2 outcome: Confirmed Home Assistant Assist would initially host wake-word detection.
+205. Session 2 outcome: Outlined Docker deployment strategy to reuse containerized workflows.
+206. Session 2 outcome: Captured safety requirements including stop phrases and escalation paths.
+207. Session 2 blocker: Still needed real hardware tests to validate wake-word reliability.
+208. Session 2 blocker: OpenAI integration strategy remained theoretical pending API provisioning.
+209. Session 2 follow-up: Install Docker and Home Assistant to move from planning to execution.
+210. Session 2 follow-up: Procure API keys and secrets before code work begins.
+211. Session 2 status feeds into the continuing roadmap for VCA 1.0.
+212. Session 3 on 2025-11-01 focused on Environment installation.
+213. Session 3 outcome: Installed Docker Engine and verified Compose functionality inside WSL2.
+214. Session 3 outcome: Deployed Home Assistant container with host networking for discovery.
+215. Session 3 outcome: Created admin and limited user accounts for Mike and Dad respectively.
+216. Session 3 outcome: Generated long-lived tokens for session management and automations.
+217. Session 3 blocker: Node 20 installation remained pending after container work.
+218. Session 3 blocker: Network connectivity still needed verification from the phone.
+219. Session 3 follow-up: Run network connectivity tests using phone and firewall rules.
+220. Session 3 follow-up: Capture backup procedures before progressing to Phase 1.
+221. Session 3 status feeds into the continuing roadmap for VCA 1.0.
+222. Session 4 on 2025-11-02 focused on Architecture pivot.
+223. Session 4 outcome: Validated Home Assistant Companion limitations around custom streaming.
+224. Session 4 outcome: Decided to retire Home Assistant from the critical voice loop.
+225. Session 4 outcome: Committed to building a custom Android app with WebSocket streaming.
+226. Session 4 outcome: Documented the new architecture in ARCHITECTURE-REVISED-NO-HA.md.
+227. Session 4 blocker: Needed to port previous guides to reflect the new Android-first strategy.
+228. Session 4 blocker: Wake-word plans required reevaluation without Home Assistant.
+229. Session 4 follow-up: Build Android client modules as soon as Session Manager reaches parity.
+230. Session 4 follow-up: Archive or annotate Home Assistant documentation to prevent confusion.
+231. Session 4 status feeds into the continuing roadmap for VCA 1.0.
+232. Session 5 on 2025-11-02 focused on Session Manager completion.
+233. Session 5 outcome: Built STT and TTS provider abstractions with OpenAI implementations.
+234. Session 5 outcome: Integrated VAD, stop phrases, and session lifecycle management.
+235. Session 5 outcome: Tested echo responses through WebSocket using the Python test client.
+236. Session 5 outcome: Recorded pipeline metrics showing seven-second round trips with sample audio.
+237. Session 5 blocker: LLM integration remained stubbed while echo mode handled responses.
+238. Session 5 blocker: Conversation history still awaited implementation.
+239. Session 5 follow-up: Implement Android client to validate streaming with real hardware.
+240. Session 5 follow-up: Prepare latency instrumentation before turning on LLMs.
+241. Session 5 status feeds into the continuing roadmap for VCA 1.0.
+242. Session 6 on 2025-11-02 focused on Android app delivery and first full pipeline.
+243. Session 6 outcome: Implemented WebSocketClient, AudioRecorder, AudioPlayer, VoiceAssistantService, WakeWordDetector, and MainActivity.
+244. Session 6 outcome: Resolved Gradle sync issues by cleaning daemon caches and adjusting timeouts.
+245. Session 6 outcome: Achieved two end-to-end tests where spoken phrases echoed back through TTS.
+246. Session 6 outcome: Documented system status, troubleshooting, and next-session tasks in the handover doc.
+247. Session 6 blocker: Wake-word remained disabled pending Vosk model installation on the phone.
+248. Session 6 blocker: LLM integration not yet connected, leaving responses in echo mode.
+249. Session 6 follow-up: Install Vosk models on external storage for wake-word testing.
+250. Session 6 follow-up: Prioritize latency monitoring ahead of LLM integration.
+251. Session 6 status feeds into the continuing roadmap for VCA 1.0.
+252. Session 7 on 2025-11-03 focused on Latency monitoring infrastructure.
+253. Session 7 outcome: Created latency_tracker.py and optimization_advisor.py for fine-grained metrics.
+254. Session 7 outcome: Added configuration sections for latency targets, model variants, and conversation history.
+255. Session 7 outcome: Prepared optimization suggestions that compare actual latencies against budgets.
+256. Session 7 outcome: Primed the codebase for LLM integration by toggling llm.enabled while defaulting to echo mode.
+257. Session 7 blocker: Provider switching required main.py updates to load mock configurations properly.
+258. Session 7 blocker: LLM provider abstraction still unimplemented pending latency foundation.
+259. Session 7 follow-up: Run live latency experiments using the Android client once protocol issues are resolved.
+260. Session 7 follow-up: Implement conversation history trimming based on new configuration fields.
+261. Session 7 status feeds into the continuing roadmap for VCA 1.0.
+262. Session 8 on 2025-11-03 focused on Latency testing and maintenance.
+263. Session 8 outcome: Ran pre-flight checks to ensure Session Manager and phone connectivity were healthy.
+264. Session 8 outcome: Discovered Android's missing session_start frame blocking live tests.
+265. Session 8 outcome: Validated provider switching between OpenAI and mock implementations.
+266. Session 8 outcome: Produced an 800-line maintenance guide covering testing, troubleshooting, and optimization paths.
+267. Session 8 blocker: Android app must send session_start before streaming audio.
+268. Session 8 blocker: Live phone recordings deferred until protocol sequence is corrected.
+269. Session 8 follow-up: Patch VoiceAssistantService to send session_start and session_end JSON messages.
+270. Session 8 follow-up: Repeat latency capture with live audio after the fix to confirm metrics under ten seconds.
+271. Session 8 status feeds into the continuing roadmap for VCA 1.0.
+272. Android module WebSocketClient plays a distinct role inside the mobile client.
+273. Android module WebSocketClient detail: Manages connection lifecycle and reconnection logic to the Session Manager.
+274. Android module WebSocketClient detail: Serializes JSON envelopes for session_start and session_end events.
+275. Android module WebSocketClient detail: Streams binary audio frames with minimal jitter using OkHttp.
+276. Android module WebSocketClient detail: Logs network errors to help diagnose dropped sessions.
+277. Android module AudioRecorder plays a distinct role inside the mobile client.
+278. Android module AudioRecorder detail: Captures PCM16 audio at 16kHz with 30-millisecond frames.
+279. Android module AudioRecorder detail: Runs inside a coroutine to avoid blocking the main thread.
+280. Android module AudioRecorder detail: Validates buffer sizes before sending frames downstream.
+281. Android module AudioRecorder detail: Applies basic error handling when microphone permissions are absent.
+282. Android module AudioPlayer plays a distinct role inside the mobile client.
+283. Android module AudioPlayer detail: Uses MediaPlayer to play MP3 responses stored in temporary files.
+284. Android module AudioPlayer detail: Releases resources promptly to prevent memory leaks.
+285. Android module AudioPlayer detail: Provides callback hooks for completion events.
+286. Android module AudioPlayer detail: Supports future improvements such as waveform visualization.
+287. Android module VoiceAssistantService plays a distinct role inside the mobile client.
+288. Android module VoiceAssistantService detail: Coordinates recording, WebSocket communication, and playback as a foreground service.
+289. Android module VoiceAssistantService detail: Displays persistent notifications required by Android background policies.
+290. Android module VoiceAssistantService detail: Manages state transitions between idle, listening, and responding.
+291. Android module VoiceAssistantService detail: Holds a wake lock to guarantee audio capture during screen-off scenarios.
+292. Android module WakeWordDetector plays a distinct role inside the mobile client.
+293. Android module WakeWordDetector detail: Integrates Vosk to listen for configured wake phrases once models are installed.
+294. Android module WakeWordDetector detail: Raises callbacks when wake words fire so the service can initiate streaming.
+295. Android module WakeWordDetector detail: Supports specialized Vosk wake models as requested by Mike.
+296. Android module WakeWordDetector detail: Handles asset copy logic when models migrate between storage locations.
+297. Android module MainActivity plays a distinct role inside the mobile client.
+298. Android module MainActivity detail: Hosts the Compose UI with tap-to-talk controls and status indicators.
+299. Android module MainActivity detail: Requests runtime permissions for microphone, notifications, and network access.
+300. Android module MainActivity detail: Provides developer shortcuts to start and stop the service during testing.
+301. Android module MainActivity detail: Displays connection status based on WebSocket callbacks.
+302. Session Manager component main.py underpins reliable backend behavior.
+303. Session Manager component main.py detail: Hosts FastAPI app and WebSocket endpoint for audio streaming.
+304. Session Manager component main.py detail: Configures providers based on YAML settings including mock variants.
+305. Session Manager component main.py detail: Applies provider switching fix implemented during Session 8.
+306. Session Manager component main.py detail: Broadcasts latency metrics to clients when configured to do so.
+307. Session Manager component config/settings.py underpins reliable backend behavior.
+308. Session Manager component config/settings.py detail: Loads YAML configuration and environment variables for flexible deployments.
+309. Session Manager component config/settings.py detail: Exposes dot-path access so nested configuration remains ergonomic.
+310. Session Manager component config/settings.py detail: Caches settings instance to avoid repetitive file reads.
+311. Session Manager component session/manager.py underpins reliable backend behavior.
+312. Session Manager component session/manager.py detail: Tracks session lifecycle states and buffers incoming audio.
+313. Session Manager component session/manager.py detail: Applies silence thresholds and stop phrase checks before concluding sessions.
+314. Session Manager component session/manager.py detail: Generates unique session IDs for logging correlation.
+315. Session Manager component session/vad.py underpins reliable backend behavior.
+316. Session Manager component session/vad.py detail: Wraps webrtcvad to distinguish speech from silence frame by frame.
+317. Session Manager component session/vad.py detail: Allows tweaking aggressiveness levels to balance sensitivity and noise tolerance.
+318. Session Manager component session/vad.py detail: Supports metrics reporting to feed latency analysis.
+319. Session Manager component session/stop_phrases.py underpins reliable backend behavior.
+320. Session Manager component session/stop_phrases.py detail: Matches transcripts against configured stop phrases to exit gracefully.
+321. Session Manager component session/stop_phrases.py detail: Logs matched phrases for audit trails and debugging.
+322. Session Manager component session/stop_phrases.py detail: Stores phrases in configuration for easy updates.
+323. Session Manager component stt/providers/openai_whisper.py underpins reliable backend behavior.
+324. Session Manager component stt/providers/openai_whisper.py detail: Calls OpenAI whisper-1 model using streaming upload.
+325. Session Manager component stt/providers/openai_whisper.py detail: Returns transcription results with optional confidence metadata.
+326. Session Manager component stt/providers/openai_whisper.py detail: Handles language and temperature from configuration.
+327. Session Manager component tts/providers/openai_tts.py underpins reliable backend behavior.
+328. Session Manager component tts/providers/openai_tts.py detail: Invokes OpenAI tts-1 with Nova voice to synthesize MP3 responses.
+329. Session Manager component tts/providers/openai_tts.py detail: Supports future configuration for alternate voices or providers.
+330. Session Manager component tts/providers/openai_tts.py detail: Streams audio in chunks to limit memory footprint.
+331. Session Manager component monitoring/latency_tracker.py underpins reliable backend behavior.
+332. Session Manager component monitoring/latency_tracker.py detail: Aggregates timing metrics and produces detailed breakdown tables.
+333. Session Manager component monitoring/latency_tracker.py detail: Computes percentile statistics to inform optimization discussions.
+334. Session Manager component monitoring/latency_tracker.py detail: Persists historical metrics for trend analysis.
+335. Session Manager component monitoring/optimization_advisor.py underpins reliable backend behavior.
+336. Session Manager component monitoring/optimization_advisor.py detail: Generates prioritized suggestions anchored to latency targets.
+337. Session Manager component monitoring/optimization_advisor.py detail: Flags model switches that could reclaim seconds without sacrificing quality.
+338. Session Manager component monitoring/optimization_advisor.py detail: Identifies bottlenecks across STT, LLM, and TTS components.
+339. Session Manager component utils/logger.py underpins reliable backend behavior.
+340. Session Manager component utils/logger.py detail: Configures color-coded logging for clarity during debugging sessions.
+341. Session Manager component utils/logger.py detail: Supports optional file handlers for persistent logs.
+342. Latency tracking now distinguishes VAD, STT, LLM, TTS, and WebSocket segments.
+343. Session 6 manual tests measured seventeen seconds on the first run and ten seconds on the second.
+344. Session 7 instrumentation can compute P50, P90, and P99 latency percentiles.
+345. Provider switching tests confirmed echo mode still works when LLM integration is disabled.
+346. Capture_live_latency.py awaits Android protocol fixes before running end-to-end on live audio.
+347. Mock providers enable offline regression tests without incurring OpenAI costs.
+348. Latency target currently sits at ten seconds total, with component budgets defined in YAML.
+349. Optimization advisor suggests switching to gpt-5-mini or local Whisper when budgets are exceeded.
+350. Silence detection thresholds can be tuned from 2.0 seconds down to 1.0 seconds when accuracy allows.
+351. Network upload timings factor into STT totals, encouraging exploration of local inference.
+352. Projected savings from Session 8 optimization roadmap could reduce totals to around 6.85 seconds.
+353. Logging infrastructure records latency metrics per session ID for future averaging.
+354. Documentation asset SESSION-6-HANDOVER.md records project knowledge crucial for continuity.
+355. Documentation asset SESSION-6-HANDOVER.md note: Captures the first successful voice conversation and outlines pending work.
+356. Documentation asset SESSION-6-SUMMARY.md records project knowledge crucial for continuity.
+357. Documentation asset SESSION-6-SUMMARY.md note: Details Android modules, build metrics, and outstanding wake-word tasks.
+358. Documentation asset SESSION-7-SUMMARY.md records project knowledge crucial for continuity.
+359. Documentation asset SESSION-7-SUMMARY.md note: Explains latency tracker design and configuration updates before LLM integration.
+360. Documentation asset SESSION-7-LLM-IMPLEMENTATION.md records project knowledge crucial for continuity.
+361. Documentation asset SESSION-7-LLM-IMPLEMENTATION.md note: Provides scaffolding for future LLM modules with latency-aware controls.
+362. Documentation asset SESSION-8-SUMMARY.md records project knowledge crucial for continuity.
+363. Documentation asset SESSION-8-SUMMARY.md note: Highlights provider switching validation and the need to fix Android protocol sequencing.
+364. Documentation asset SESSION-8-MAINTENANCE-GUIDE.md records project knowledge crucial for continuity.
+365. Documentation asset SESSION-8-MAINTENANCE-GUIDE.md note: Serves as an encyclopedic reference for testing, optimization, and troubleshooting.
+366. Documentation asset CHANGELOG.md records project knowledge crucial for continuity.
+367. Documentation asset CHANGELOG.md note: Logs every session's achievements, decisions, and pivot moments for posterity.
+368. Documentation asset Doc_Catalogue.md records project knowledge crucial for continuity.
+369. Documentation asset Doc_Catalogue.md note: Provides 100-word summaries and redundancy notes for forty markdown assets.
+370. Documentation asset ARCHITECTURE-REVISED-NO-HA.md records project knowledge crucial for continuity.
+371. Documentation asset ARCHITECTURE-REVISED-NO-HA.md note: Documents the move away from Home Assistant toward a bespoke Android client.
+372. Documentation asset android-app-development-guide.md records project knowledge crucial for continuity.
+373. Documentation asset android-app-development-guide.md note: Walks developers through building and deploying the Android app modules.
+374. Documentation asset ANDROID-DEV-WORKFLOW.md records project knowledge crucial for continuity.
+375. Documentation asset ANDROID-DEV-WORKFLOW.md note: Explains the hybrid Android Studio plus WSL workflow for reliable builds.
+376. Documentation asset ANDROID-STUDIO-SETUP-GUIDE.md records project knowledge crucial for continuity.
+377. Documentation asset ANDROID-STUDIO-SETUP-GUIDE.md note: Steps through Android Studio installation and SDK configuration.
+378. Documentation asset GRADLE-SYNC-FINAL-DIAGNOSIS.md records project knowledge crucial for continuity.
+379. Documentation asset GRADLE-SYNC-FINAL-DIAGNOSIS.md note: Narrates the investigation that fixed Android Studio sync timeouts.
+380. Documentation asset GRADLE-SYNC-FIX-INSTRUCTIONS.md records project knowledge crucial for continuity.
+381. Documentation asset GRADLE-SYNC-FIX-INSTRUCTIONS.md note: Offers a checklist for validating Gradle sync after cache cleanups.
+382. Documentation asset GRADLE-SYNC-ANALYSIS-SUMMARY.md records project knowledge crucial for continuity.
+383. Documentation asset GRADLE-SYNC-ANALYSIS-SUMMARY.md note: Summarizes root causes and fixes for Gradle communication failures.
+384. Documentation asset NETWORK-CONNECTIVITY-TEST.md records project knowledge crucial for continuity.
+385. Documentation asset NETWORK-CONNECTIVITY-TEST.md note: Guides verification of WSL port forwarding so the phone can reach services.
+386. Documentation asset STT-TTS-HARDWARE-ANALYSIS.md records project knowledge crucial for continuity.
+387. Documentation asset STT-TTS-HARDWARE-ANALYSIS.md note: Quantifies GPU potential and cost comparisons for local versus cloud speech.
+388. Documentation asset MODULAR-STT-TTS-PIPELINE-DESIGN.md records project knowledge crucial for continuity.
+389. Documentation asset MODULAR-STT-TTS-PIPELINE-DESIGN.md note: Defines provider abstractions, fallback logic, and testing strategies.
+390. Documentation asset PHASE-0-COMPLETION-STATUS.md records project knowledge crucial for continuity.
+391. Documentation asset PHASE-0-COMPLETION-STATUS.md note: Summarizes environment readiness and outstanding Phase 0 tasks.
+392. Documentation asset PHASE-1-COMPLETION-STATUS.md records project knowledge crucial for continuity.
+393. Documentation asset PHASE-1-COMPLETION-STATUS.md note: Verifies Session Manager backend completion with configuration snippets.
+394. Documentation asset PHASE-1-ARCHITECTURE-CLARIFICATION.md records project knowledge crucial for continuity.
+395. Documentation asset PHASE-1-ARCHITECTURE-CLARIFICATION.md note: Clarifies Home Assistant's limited wake-word role before the pivot.
+396. Documentation asset PHASE-1-IMPLEMENTATION-PLAN.md records project knowledge crucial for continuity.
+397. Documentation asset PHASE-1-IMPLEMENTATION-PLAN.md note: Details the original roadmap that leaned on Home Assistant.
+398. Documentation asset PHASE-1-UI-CONFIGURATION-STEPS.md records project knowledge crucial for continuity.
+399. Documentation asset PHASE-1-UI-CONFIGURATION-STEPS.md note: Outlines UI setup for Home Assistant integrations before they were deprecated.
+400. Documentation asset PHASE-1-UI-CONFIGURATION-STEPS-REVISED.md records project knowledge crucial for continuity.
+401. Documentation asset PHASE-1-UI-CONFIGURATION-STEPS-REVISED.md note: Refines the UI plan to focus purely on wake-word integration.
+402. Documentation asset WYOMING-STANDALONE-SETUP-GUIDE.md records project knowledge crucial for continuity.
+403. Documentation asset WYOMING-STANDALONE-SETUP-GUIDE.md note: Shows how to run Wyoming containers without Home Assistant addons.
+404. Documentation asset HA-DOCKER-INSTALLATION-PLAN.md records project knowledge crucial for continuity.
+405. Documentation asset HA-DOCKER-INSTALLATION-PLAN.md note: Documents Docker setup and Home Assistant deployment procedures.
+406. Documentation asset HOME-ASSISTANT-ENVIRONMENT-EXPLORATION.md records project knowledge crucial for continuity.
+407. Documentation asset HOME-ASSISTANT-ENVIRONMENT-EXPLORATION.md note: Explores Home Assistant's capabilities for agent orchestration.
+408. Documentation asset INSTALLHOMEASSISTANTCRASH/CrashofInstallHomeAssistantCrash.md records project knowledge crucial for continuity.
+409. Documentation asset INSTALLHOMEASSISTANTCRASH/CrashofInstallHomeAssistantCrash.md note: Preserves the narrative of the failed HA attempt and subsequent pivot.
+410. Documentation asset ANDROID-STUDIO-WSL2-WORKAROUND.md records project knowledge crucial for continuity.
+411. Documentation asset ANDROID-STUDIO-WSL2-WORKAROUND.md note: Advises creating projects on Windows then copying into WSL.
+412. Documentation asset VCAAssistant/BUILD-COMMANDS.md records project knowledge crucial for continuity.
+413. Documentation asset VCAAssistant/BUILD-COMMANDS.md note: Condenses everyday gradle and adb commands for quick reference.
+414. Documentation asset SESSION-6-HANDOVER-OLD.md records project knowledge crucial for continuity.
+415. Documentation asset SESSION-6-HANDOVER-OLD.md note: Captures the earlier handover before full pipeline success.
+416. Documentation asset SESSION-6-SUMMARY.md records project knowledge crucial for continuity.
+417. Documentation asset SESSION-6-SUMMARY.md note: Reinforces Session 6 achievements with module-level detail.
+418. Documentation asset CLAUDE.md records project knowledge crucial for continuity.
+419. Documentation asset CLAUDE.md note: Briefs Claude-based assistants on project etiquette.
+420. Documentation asset AGENTS.md records project knowledge crucial for continuity.
+421. Documentation asset AGENTS.md note: Arms AI collaborators with WSL best practices and troubleshooting.
+422. Documentation asset Documents/WSL-BACKUP-RESTORE-REFERENCE.md records project knowledge crucial for continuity.
+423. Documentation asset Documents/WSL-BACKUP-RESTORE-REFERENCE.md note: Ensures backups and restores can be executed without data loss.
+424. Documentation asset Documents/WSL-CLAUDE-QUICK-REFERENCE.md records project knowledge crucial for continuity.
+425. Documentation asset Documents/WSL-CLAUDE-QUICK-REFERENCE.md note: Condenses operational tips for running Claude inside WSL.
+426. Documentation asset Documents/WSL-PROBLEMS WITH CLAUDE.md records project knowledge crucial for continuity.
+427. Documentation asset Documents/WSL-PROBLEMS WITH CLAUDE.md note: Diagnoses common installation and path issues under WSL.
+428. Documentation asset PROMPTLIBRARY.TXT records project knowledge crucial for continuity.
+429. Documentation asset PROMPTLIBRARY.TXT note: Collects prompts and strategies used throughout the project.
+430. Documentation asset README.md records project knowledge crucial for continuity.
+431. Documentation asset README.md note: Provides high-level orientation though it still reflects legacy architecture.
+432. Documentation asset CREDENTIALS/README.md records project knowledge crucial for continuity.
+433. Documentation asset CREDENTIALS/README.md note: Explains how to store secrets safely outside version control.
+434. Documentation asset SESSION_MANAGER/README.md records project knowledge crucial for continuity.
+435. Documentation asset SESSION_MANAGER/README.md note: Delivers a canonical overview of backend functionality.
+436. Documentation asset SESSION_MANAGER/MONITORING/README.md records project knowledge crucial for continuity.
+437. Documentation asset SESSION_MANAGER/MONITORING/README.md note: Will document latency modules as they stabilize.
+438. Config key openai.api_key stores the credential used by both STT and TTS providers.
+439. Config key stt_provider toggles between openai_whisper and mock_stt implementations.
+440. Config key tts_provider mirrors the STT selection, allowing mock playback when needed.
+441. Config key session.vad.silence_timeout controls the number of seconds used to detect speech end.
+442. Config key session.stop_phrases enumerates phrases that trigger graceful termination.
+443. Config key latency_monitoring.enabled toggles latency tracking on or off.
+444. Config key latency_monitoring.target_total_latency defines the ten-second goal for the pipeline.
+445. Config key latency_monitoring.component_targets allocates budgets for VAD, STT, LLM, TTS, and WebSocket.
+446. Config key latency_monitoring.model_latencies catalogues historical minima, averages, and maxima per model.
+447. Config key conversation.max_history_turns determines how many dialogue turns persist in memory.
+448. Config key conversation.trim_strategy specifies sliding_window trimming for future history management.
+449. Config key llm.enabled keeps the system in echo mode until generative replies are ready.
+450. Config key llm.current_model indicates which provider variant should answer when LLMs turn on.
+451. Config key llm.reasoning_effort influences eventual request parameters once the provider integrates.
+452. Config key llm.text_verbosity enforces the short response style aligned with Dad's preferences.
+453. Config key mock_stt.mock_latency simulates STT timing during offline tests.
+454. Config key mock_stt.mock_text defines what transcription string mock mode returns.
+455. Config key mock_tts.mock_latency can be added to mirror audio synthesis timing when needed.
+456. Config key server.port keeps the WebSocket listener on port 5000 by default.
+457. Command `python3 -m venv venv`: Creates the isolated Python environment for Session Manager.
+458. Command `source venv/bin/activate`: Activates the virtual environment in WSL.
+459. Command `pip install -r requirements.txt`: Installs backend dependencies.
+460. Command `python test_client.py test`: Sends a sample audio stream to the Session Manager.
+461. Command `python test_client.py test_audio_16k.wav`: Streams a recorded WAV file to verify STT and TTS.
+462. Command `curl http://localhost:5000/health`: Checks Session Manager component readiness.
+463. Command `./gradlew assembleDebug`: Builds the Android debug APK without installing.
+464. Command `./gradlew installDebug`: Builds and installs the Android app onto the connected device.
+465. Command `adb devices`: Lists authorized Android devices for deployment.
+466. Command `adb logcat | grep VCA`: Filters Android logs to entries relevant to the assistant.
+467. Command `netsh interface portproxy show all`: Displays Windows port forwarding rules supporting WSL.
+468. Command `netsh interface portproxy add v4tov4 listenport=5000 listenaddress=0.0.0.0 connectport=5000 connectaddress=172.20.177.188`: Creates the proxy so the phone can reach the Session Manager.
+469. Command `docker ps`: Shows running containers when historical Home Assistant services are needed.
+470. Command `docker logs homeassistant`: Retrieves logs for the legacy Home Assistant container.
+471. Command `adb push vosk-model-small-en-us-0.15 /sdcard/Documents/VCA/models/vosk-model-small-en-us`: Copies wake-word assets onto the phone.
+472. Command `adb shell am start -n com.vca.assistant/.MainActivity`: Launches the Android app via command line.
+473. Command `adb shell am force-stop com.vca.assistant`: Stops the Android app to reset state.
+474. Command `adb shell ip addr show wlan0 | grep 'inet'`: Checks the phone's IP address for network troubleshooting.
+475. Command `python capture_live_latency.py`: Will capture live latency once the Android protocol fix lands.
+476. Dad taps the microphone icon or future wake word to initiate a session.
+477. VoiceAssistantService sends a session_start envelope as soon as the protocol fix is applied.
+478. AudioRecorder streams PCM frames through WebSocketClient to the Session Manager.
+479. Session Manager buffers frames until silence is detected by webrtcvad.
+480. Buffered audio reaches the STT provider which transcribes speech into text.
+481. Transcription passes through stop phrase detection to determine if the session should end.
+482. A forthcoming LLM module will interpret the text and craft a response.
+483. TTS provider synthesizes the response using OpenAI's Nova voice for clarity.
+484. AudioPlayer receives the MP3 stream and plays it through the phone speaker.
+485. Latency tracker logs the timing of each stage for future analysis.
+486. Optimization advisor reviews the timing and flags potential bottlenecks.
+487. Session Manager sends a session_end envelope to conclude the interaction.
+488. Metrics pipeline stores session data for future comparisons once persistence lands.
+489. Doc_Catalogue.md cross-references each markdown file so contributors can spot redundancies quickly.
+490. SESSION-8-MAINTENANCE-GUIDE.md links to latency tracker modules for deep dives.
+491. ARCHITECTURE-REVISED-NO-HA.md supersedes Home Assistant guides but preserves history for context.
+492. android-app-development-guide.md and SESSION-6-SUMMARY.md together describe code and outcomes.
+493. GRADLE-SYNC documents complement BUILD-COMMANDS by distinguishing IDE and CLI workflows.
+494. STT-TTS-HARDWARE-ANALYSIS.md informs modular pipeline decisions recorded in design documents.
+495. WSL backup guides dovetail with AGENTS.md to keep automated assistants from damaging environments.
+496. README.md requires updates to align with architecture changes flagged in the catalogue notes.
+497. Home Assistant documents now serve as archival evidence supporting the pivot narrative.
+498. Rapid documentation after each session prevents knowledge loss and speeds onboarding.
+499. Testing with mock providers provides faster feedback loops than waiting on end-to-end hardware tests.
+500. Tooling decisions should favor reproducibility; WSL plus Android Studio requires deliberate configuration.
+501. Architectural pivots benefit from capturing rationale so future contributors understand why changes occurred.
+502. Latency budgeting before LLM integration avoids surprises once generative models enter the pipeline.
+503. Fix the Android session_start protocol so live latency measurements can resume.
+504. Integrate an LLM provider using the new configuration scaffolding introduced in Session 7.
+505. Implement conversation history trimming strategies tailored to tech support versus casual chat.
+506. Install Vosk models on the phone to activate wake-word detection in field tests.
+507. Transition STT and TTS to local models when GPU optimization meets quality expectations.
+508. Refresh the README to align with the Android-first architecture.
+509. Consolidate redundant Home Assistant documents into an archival folder.
+510. Automate latency reporting dashboards for quicker interpretation of captured metrics.
+511. Begin building memory pack schemas so save and forget flows gain persistence.
+512. Older Home Assistant guides remain for historical reference but conflict with the revised architecture.
+513. SESSION-6-HANDOVER.md references Anthropic integration even though OpenAI remains the short-term path.
+514. Doc_Catalogue flags redundant markdown files so future editing efforts stay focused.
+515. The README still shows Home Assistant in the architecture diagram and needs an update to match reality.
+516. Gradle sync troubleshooting now recommends deleting .gradle/ideaInitScripts to clear IDE interference.
+517. Developers run ./gradlew installDebug from WSL for consistent builds.
+518. adb devices confirms the Samsung A05 connection before each deployment.
+519. Ripgrep searches replace slower tools, especially when scanning large documentation trees.
+520. CLAUDE.md instructs AI helpers to stay within project guardrails while editing.
+521. Git status checks ensure credentials remain outside version control.
+522. Latency monitoring can be toggled in config.yaml by setting latency_monitoring.enabled to false.
+523. Mock providers rely on configuration keys under mock_stt and mock_tts for deterministic tests.
+524. Maintenance guide suggests capturing logs via adb logcat | grep VCA for focused debugging.
+525. Session Manager health endpoint returns JSON verifying VAD, STT, TTS, and session components.
+526. Safety pack logic will log every escalation request for audit once implemented.
+527. Orientation summaries are scheduled for 8pm to match Dad's evening routine.
+528. Latency breakdown tables align with the user requirement to justify tuning decisions.
+529. Session Manager echo mode remains active until llm.enabled toggles true.
+530. Provider switching allows development to continue even during OpenAI outages.
+531. Vosk wake-word models must live under /sdcard/Documents/VCA/models to be readable by the app.
+532. Whisper Small local inference is projected to cut STT time by roughly two seconds.
+533. Future pipeline will gate long responses by max_response_sentences to maintain brevity.
+534. Stop phrase detection ensures Dad retains command over when conversations end.
+535. Backup tarballs snapshot commit 2c15a955b03376da6a2ce17edb7fe84c7ff0e3a6 for reproducibility.
+536. Project reflection emphasizes latency accountability and remains central to VCA 1.0's evolution.
+537. Project reflection emphasizes safety-first design and remains central to VCA 1.0's evolution.
+538. Project reflection emphasizes documentation clarity and remains central to VCA 1.0's evolution.
+539. Project reflection emphasizes wake-word readiness and remains central to VCA 1.0's evolution.
+540. Project reflection emphasizes modular provider swaps and remains central to VCA 1.0's evolution.
+541. Project reflection emphasizes WSL resilience and remains central to VCA 1.0's evolution.
+542. Project reflection emphasizes Android service polish and remains central to VCA 1.0's evolution.
+543. Project reflection emphasizes LLM preparedness and remains central to VCA 1.0's evolution.
+544. Project reflection emphasizes memory scaffolding and remains central to VCA 1.0's evolution.
+545. Project reflection emphasizes automation foresight and remains central to VCA 1.0's evolution.
+546. Project reflection emphasizes stakeholder empathy and remains central to VCA 1.0's evolution.
+547. Project reflection emphasizes testing discipline and remains central to VCA 1.0's evolution.
+548. Project reflection emphasizes hardware awareness and remains central to VCA 1.0's evolution.
+549. Project reflection emphasizes command reproducibility and remains central to VCA 1.0's evolution.
+550. Project reflection emphasizes persona consistency and remains central to VCA 1.0's evolution.
+551. Project reflection emphasizes backup vigilance and remains central to VCA 1.0's evolution.
+552. Project reflection emphasizes workflow hygiene and remains central to VCA 1.0's evolution.
+553. Project reflection emphasizes future roadmap alignment and remains central to VCA 1.0's evolution.
+554. Project reflection emphasizes config transparency and remains central to VCA 1.0's evolution.
+555. Project reflection emphasizes accessibility focus and remains central to VCA 1.0's evolution.
+556. Project reflection emphasizes speech accuracy and remains central to VCA 1.0's evolution.
+557. Project reflection emphasizes battery stewardship and remains central to VCA 1.0's evolution.
+558. Project reflection emphasizes network diagnostics and remains central to VCA 1.0's evolution.
+559. Project reflection emphasizes code modularity and remains central to VCA 1.0's evolution.
+560. Project reflection emphasizes session observability and remains central to VCA 1.0's evolution.
+561. Project reflection emphasizes developer ergonomics and remains central to VCA 1.0's evolution.
+562. Project reflection emphasizes onboarding friendliness and remains central to VCA 1.0's evolution.
+563. Project reflection emphasizes toolchain mastery and remains central to VCA 1.0's evolution.
+564. Project reflection emphasizes risk mitigation and remains central to VCA 1.0's evolution.
+565. Project reflection emphasizes continuous improvement and remains central to VCA 1.0's evolution.
+566. Project reflection emphasizes delightful responses and remains central to VCA 1.0's evolution.
+567. Project reflection emphasizes consent enforcement and remains central to VCA 1.0's evolution.
+568. Project reflection emphasizes escalation readiness and remains central to VCA 1.0's evolution.
+569. Project reflection emphasizes data privacy and remains central to VCA 1.0's evolution.
+570. Project reflection emphasizes voice naturalness and remains central to VCA 1.0's evolution.
+571. Project reflection emphasizes timeline tracking and remains central to VCA 1.0's evolution.
+572. Project reflection emphasizes contradiction resolution and remains central to VCA 1.0's evolution.
+573. Project reflection emphasizes document curation and remains central to VCA 1.0's evolution.
+574. Project reflection emphasizes provider benchmarking and remains central to VCA 1.0's evolution.
+575. Project reflection emphasizes maintenance culture and remains central to VCA 1.0's evolution.
+576. Project reflection emphasizes device compatibility and remains central to VCA 1.0's evolution.
+577. Project reflection emphasizes mobile UX and remains central to VCA 1.0's evolution.
+578. Project reflection emphasizes Python robustness and remains central to VCA 1.0's evolution.
+579. Project reflection emphasizes Android logging and remains central to VCA 1.0's evolution.
+580. Project reflection emphasizes GPU utilization and remains central to VCA 1.0's evolution.
+581. Project reflection emphasizes fallback strategies and remains central to VCA 1.0's evolution.
+582. Project reflection emphasizes milestone reporting and remains central to VCA 1.0's evolution.
+583. Project reflection emphasizes pack organization and remains central to VCA 1.0's evolution.
+584. Project reflection emphasizes automation pacing and remains central to VCA 1.0's evolution.
+585. Project reflection emphasizes user trust and remains central to VCA 1.0's evolution.
+586. Project reflection emphasizes latency accountability and anchors decision-making across sessions.
+587. Project reflection emphasizes safety-first design and anchors decision-making across sessions.
+588. Project reflection emphasizes documentation clarity and anchors decision-making across sessions.
+589. Project reflection emphasizes wake-word readiness and anchors decision-making across sessions.
+590. Project reflection emphasizes modular provider swaps and anchors decision-making across sessions.
+591. Project reflection emphasizes WSL resilience and anchors decision-making across sessions.
+592. Project reflection emphasizes Android service polish and anchors decision-making across sessions.
+593. Project reflection emphasizes LLM preparedness and anchors decision-making across sessions.
+594. Project reflection emphasizes memory scaffolding and anchors decision-making across sessions.
+595. Project reflection emphasizes automation foresight and anchors decision-making across sessions.
+596. Project reflection emphasizes stakeholder empathy and anchors decision-making across sessions.
+597. Project reflection emphasizes testing discipline and anchors decision-making across sessions.
+598. Project reflection emphasizes hardware awareness and anchors decision-making across sessions.
+599. Project reflection emphasizes command reproducibility and anchors decision-making across sessions.
+600. Project reflection emphasizes persona consistency and anchors decision-making across sessions.
+601. Project reflection emphasizes backup vigilance and anchors decision-making across sessions.
+602. Project reflection emphasizes workflow hygiene and anchors decision-making across sessions.
+603. Project reflection emphasizes future roadmap alignment and anchors decision-making across sessions.
+604. Project reflection emphasizes config transparency and anchors decision-making across sessions.
+605. Project reflection emphasizes accessibility focus and anchors decision-making across sessions.
+606. Project reflection emphasizes speech accuracy and anchors decision-making across sessions.
+607. Project reflection emphasizes battery stewardship and anchors decision-making across sessions.
+608. Project reflection emphasizes network diagnostics and anchors decision-making across sessions.
+609. Project reflection emphasizes code modularity and anchors decision-making across sessions.
+610. Project reflection emphasizes session observability and anchors decision-making across sessions.
+611. Project reflection emphasizes developer ergonomics and anchors decision-making across sessions.
+612. Project reflection emphasizes onboarding friendliness and anchors decision-making across sessions.
+613. Project reflection emphasizes toolchain mastery and anchors decision-making across sessions.
+614. Project reflection emphasizes risk mitigation and anchors decision-making across sessions.
+615. Project reflection emphasizes continuous improvement and anchors decision-making across sessions.
+616. Project reflection emphasizes delightful responses and anchors decision-making across sessions.
+617. Project reflection emphasizes consent enforcement and anchors decision-making across sessions.
+618. Project reflection emphasizes escalation readiness and anchors decision-making across sessions.
+619. Project reflection emphasizes data privacy and anchors decision-making across sessions.
+620. Project reflection emphasizes voice naturalness and anchors decision-making across sessions.
+621. Project reflection emphasizes timeline tracking and anchors decision-making across sessions.
+622. Project reflection emphasizes contradiction resolution and anchors decision-making across sessions.
+623. Project reflection emphasizes document curation and anchors decision-making across sessions.
+624. Project reflection emphasizes provider benchmarking and anchors decision-making across sessions.
+625. Project reflection emphasizes maintenance culture and anchors decision-making across sessions.
+626. Project reflection emphasizes device compatibility and anchors decision-making across sessions.
+627. Project reflection emphasizes mobile UX and anchors decision-making across sessions.
+628. Project reflection emphasizes Python robustness and anchors decision-making across sessions.
+629. Project reflection emphasizes Android logging and anchors decision-making across sessions.
+630. Project reflection emphasizes GPU utilization and anchors decision-making across sessions.
+631. Project reflection emphasizes fallback strategies and anchors decision-making across sessions.
+632. Project reflection emphasizes milestone reporting and anchors decision-making across sessions.
+633. Project reflection emphasizes pack organization and anchors decision-making across sessions.
+634. Project reflection emphasizes automation pacing and anchors decision-making across sessions.
+635. Project reflection emphasizes user trust and anchors decision-making across sessions.
+636. Project reflection emphasizes latency accountability and guides task prioritization week over week.
+637. Project reflection emphasizes safety-first design and guides task prioritization week over week.
+638. Project reflection emphasizes documentation clarity and guides task prioritization week over week.
+639. Project reflection emphasizes wake-word readiness and guides task prioritization week over week.
+640. Project reflection emphasizes modular provider swaps and guides task prioritization week over week.
+641. Project reflection emphasizes WSL resilience and guides task prioritization week over week.
+642. Project reflection emphasizes Android service polish and guides task prioritization week over week.
+643. Project reflection emphasizes LLM preparedness and guides task prioritization week over week.
+644. Project reflection emphasizes memory scaffolding and guides task prioritization week over week.
+645. Project reflection emphasizes automation foresight and guides task prioritization week over week.
+646. Project reflection emphasizes stakeholder empathy and guides task prioritization week over week.
+647. Project reflection emphasizes testing discipline and guides task prioritization week over week.
+648. Project reflection emphasizes hardware awareness and guides task prioritization week over week.
+649. Project reflection emphasizes command reproducibility and guides task prioritization week over week.
+650. Project reflection emphasizes persona consistency and guides task prioritization week over week.
+651. Project reflection emphasizes backup vigilance and guides task prioritization week over week.
+652. Project reflection emphasizes workflow hygiene and guides task prioritization week over week.
+653. Project reflection emphasizes future roadmap alignment and guides task prioritization week over week.
+654. Project reflection emphasizes config transparency and guides task prioritization week over week.
+655. Project reflection emphasizes accessibility focus and guides task prioritization week over week.
+656. Project reflection emphasizes speech accuracy and guides task prioritization week over week.
+657. Project reflection emphasizes battery stewardship and guides task prioritization week over week.
+658. Project reflection emphasizes network diagnostics and guides task prioritization week over week.
+659. Project reflection emphasizes code modularity and guides task prioritization week over week.
+660. Project reflection emphasizes session observability and guides task prioritization week over week.
+661. Project reflection emphasizes developer ergonomics and guides task prioritization week over week.
+662. Project reflection emphasizes onboarding friendliness and guides task prioritization week over week.
+663. Project reflection emphasizes toolchain mastery and guides task prioritization week over week.
+664. Project reflection emphasizes risk mitigation and guides task prioritization week over week.
+665. Project reflection emphasizes continuous improvement and guides task prioritization week over week.
+666. Project reflection emphasizes delightful responses and guides task prioritization week over week.
+667. Project reflection emphasizes consent enforcement and guides task prioritization week over week.
+668. Project reflection emphasizes escalation readiness and guides task prioritization week over week.
+669. Project reflection emphasizes data privacy and guides task prioritization week over week.
+670. Project reflection emphasizes voice naturalness and guides task prioritization week over week.
+671. Project reflection emphasizes timeline tracking and guides task prioritization week over week.
+672. Project reflection emphasizes contradiction resolution and guides task prioritization week over week.
+673. Project reflection emphasizes document curation and guides task prioritization week over week.
+674. Project reflection emphasizes provider benchmarking and guides task prioritization week over week.
+675. Project reflection emphasizes maintenance culture and guides task prioritization week over week.
+676. Project reflection emphasizes device compatibility and guides task prioritization week over week.
+677. Project reflection emphasizes mobile UX and guides task prioritization week over week.
+678. Project reflection emphasizes Python robustness and guides task prioritization week over week.
+679. Project reflection emphasizes Android logging and guides task prioritization week over week.
+680. Project reflection emphasizes GPU utilization and guides task prioritization week over week.
+681. Project reflection emphasizes fallback strategies and guides task prioritization week over week.
+682. Project reflection emphasizes milestone reporting and guides task prioritization week over week.
+683. Project reflection emphasizes pack organization and guides task prioritization week over week.
+684. Project reflection emphasizes automation pacing and guides task prioritization week over week.
+685. Project reflection emphasizes user trust and guides task prioritization week over week.
+686. Project reflection emphasizes latency accountability and ensures upgrades never compromise reliability.
+687. Project reflection emphasizes safety-first design and ensures upgrades never compromise reliability.
+688. Project reflection emphasizes documentation clarity and ensures upgrades never compromise reliability.
+689. Project reflection emphasizes wake-word readiness and ensures upgrades never compromise reliability.
+690. Project reflection emphasizes modular provider swaps and ensures upgrades never compromise reliability.
+691. Project reflection emphasizes WSL resilience and ensures upgrades never compromise reliability.
+692. Project reflection emphasizes Android service polish and ensures upgrades never compromise reliability.
+693. Project reflection emphasizes LLM preparedness and ensures upgrades never compromise reliability.
+694. Project reflection emphasizes memory scaffolding and ensures upgrades never compromise reliability.
+695. Project reflection emphasizes automation foresight and ensures upgrades never compromise reliability.
+696. Project reflection emphasizes stakeholder empathy and ensures upgrades never compromise reliability.
+697. Project reflection emphasizes testing discipline and ensures upgrades never compromise reliability.
+698. Project reflection emphasizes hardware awareness and ensures upgrades never compromise reliability.
+699. Project reflection emphasizes command reproducibility and ensures upgrades never compromise reliability.
+700. Project reflection emphasizes persona consistency and ensures upgrades never compromise reliability.
+701. Project reflection emphasizes backup vigilance and ensures upgrades never compromise reliability.
+702. Project reflection emphasizes workflow hygiene and ensures upgrades never compromise reliability.
+703. Project reflection emphasizes future roadmap alignment and ensures upgrades never compromise reliability.
+704. Project reflection emphasizes config transparency and ensures upgrades never compromise reliability.
+705. Project reflection emphasizes accessibility focus and ensures upgrades never compromise reliability.
+706. Project reflection emphasizes speech accuracy and ensures upgrades never compromise reliability.
+707. Project reflection emphasizes battery stewardship and ensures upgrades never compromise reliability.
+708. Project reflection emphasizes network diagnostics and ensures upgrades never compromise reliability.
+709. Project reflection emphasizes code modularity and ensures upgrades never compromise reliability.
+710. Project reflection emphasizes session observability and ensures upgrades never compromise reliability.
+711. Project reflection emphasizes developer ergonomics and ensures upgrades never compromise reliability.
+712. Project reflection emphasizes onboarding friendliness and ensures upgrades never compromise reliability.
+713. Project reflection emphasizes toolchain mastery and ensures upgrades never compromise reliability.
+714. Project reflection emphasizes risk mitigation and ensures upgrades never compromise reliability.
+715. Project reflection emphasizes continuous improvement and ensures upgrades never compromise reliability.
+716. Project reflection emphasizes delightful responses and ensures upgrades never compromise reliability.
+717. Project reflection emphasizes consent enforcement and ensures upgrades never compromise reliability.
+718. Project reflection emphasizes escalation readiness and ensures upgrades never compromise reliability.
+719. Project reflection emphasizes data privacy and ensures upgrades never compromise reliability.
+720. Project reflection emphasizes voice naturalness and ensures upgrades never compromise reliability.
+721. Project reflection emphasizes timeline tracking and ensures upgrades never compromise reliability.
+722. Project reflection emphasizes contradiction resolution and ensures upgrades never compromise reliability.
+723. Project reflection emphasizes document curation and ensures upgrades never compromise reliability.
+724. Project reflection emphasizes provider benchmarking and ensures upgrades never compromise reliability.
+725. Project reflection emphasizes maintenance culture and ensures upgrades never compromise reliability.
+726. Project reflection emphasizes device compatibility and ensures upgrades never compromise reliability.
+727. Project reflection emphasizes mobile UX and ensures upgrades never compromise reliability.
+728. Project reflection emphasizes Python robustness and ensures upgrades never compromise reliability.
+729. Project reflection emphasizes Android logging and ensures upgrades never compromise reliability.
+730. Project reflection emphasizes GPU utilization and ensures upgrades never compromise reliability.
+731. Project reflection emphasizes fallback strategies and ensures upgrades never compromise reliability.
+732. Project reflection emphasizes milestone reporting and ensures upgrades never compromise reliability.
+733. Project reflection emphasizes pack organization and ensures upgrades never compromise reliability.
+734. Project reflection emphasizes automation pacing and ensures upgrades never compromise reliability.
+735. Project reflection emphasizes user trust and ensures upgrades never compromise reliability.
+736. Project reflection emphasizes latency accountability and keeps new contributors aligned with prior lessons.
+737. Project reflection emphasizes safety-first design and keeps new contributors aligned with prior lessons.
+738. Project reflection emphasizes documentation clarity and keeps new contributors aligned with prior lessons.
+739. Project reflection emphasizes wake-word readiness and keeps new contributors aligned with prior lessons.
+740. Project reflection emphasizes modular provider swaps and keeps new contributors aligned with prior lessons.
+741. Project reflection emphasizes WSL resilience and keeps new contributors aligned with prior lessons.
+742. Project reflection emphasizes Android service polish and keeps new contributors aligned with prior lessons.
+743. Project reflection emphasizes LLM preparedness and keeps new contributors aligned with prior lessons.
+744. Project reflection emphasizes memory scaffolding and keeps new contributors aligned with prior lessons.
+745. Project reflection emphasizes automation foresight and keeps new contributors aligned with prior lessons.
+746. Project reflection emphasizes stakeholder empathy and keeps new contributors aligned with prior lessons.
+747. Project reflection emphasizes testing discipline and keeps new contributors aligned with prior lessons.
+748. Project reflection emphasizes hardware awareness and keeps new contributors aligned with prior lessons.
+749. Project reflection emphasizes command reproducibility and keeps new contributors aligned with prior lessons.
+750. Project reflection emphasizes persona consistency and keeps new contributors aligned with prior lessons.
+751. Project reflection emphasizes backup vigilance and keeps new contributors aligned with prior lessons.
+752. Project reflection emphasizes workflow hygiene and keeps new contributors aligned with prior lessons.
+753. Project reflection emphasizes future roadmap alignment and keeps new contributors aligned with prior lessons.
+754. Project reflection emphasizes config transparency and keeps new contributors aligned with prior lessons.
+755. Project reflection emphasizes accessibility focus and keeps new contributors aligned with prior lessons.
+756. Project reflection emphasizes speech accuracy and keeps new contributors aligned with prior lessons.
+757. Project reflection emphasizes battery stewardship and keeps new contributors aligned with prior lessons.
+758. Project reflection emphasizes network diagnostics and keeps new contributors aligned with prior lessons.
+759. Project reflection emphasizes code modularity and keeps new contributors aligned with prior lessons.
+760. Project reflection emphasizes session observability and keeps new contributors aligned with prior lessons.
+761. Project reflection emphasizes developer ergonomics and keeps new contributors aligned with prior lessons.
+762. Project reflection emphasizes onboarding friendliness and keeps new contributors aligned with prior lessons.
+763. Project reflection emphasizes toolchain mastery and keeps new contributors aligned with prior lessons.
+764. Project reflection emphasizes risk mitigation and keeps new contributors aligned with prior lessons.
+765. Project reflection emphasizes continuous improvement and keeps new contributors aligned with prior lessons.
+766. Project reflection emphasizes delightful responses and keeps new contributors aligned with prior lessons.
+767. Project reflection emphasizes consent enforcement and keeps new contributors aligned with prior lessons.
+768. Project reflection emphasizes escalation readiness and keeps new contributors aligned with prior lessons.
+769. Project reflection emphasizes data privacy and keeps new contributors aligned with prior lessons.
+770. Project reflection emphasizes voice naturalness and keeps new contributors aligned with prior lessons.
+771. Project reflection emphasizes timeline tracking and keeps new contributors aligned with prior lessons.
+772. Project reflection emphasizes contradiction resolution and keeps new contributors aligned with prior lessons.
+773. Project reflection emphasizes document curation and keeps new contributors aligned with prior lessons.
+774. Project reflection emphasizes provider benchmarking and keeps new contributors aligned with prior lessons.
+775. Project reflection emphasizes maintenance culture and keeps new contributors aligned with prior lessons.
+776. Project reflection emphasizes device compatibility and keeps new contributors aligned with prior lessons.
+777. Project reflection emphasizes mobile UX and keeps new contributors aligned with prior lessons.
+778. Project reflection emphasizes Python robustness and keeps new contributors aligned with prior lessons.
+779. Project reflection emphasizes Android logging and keeps new contributors aligned with prior lessons.
+780. Project reflection emphasizes GPU utilization and keeps new contributors aligned with prior lessons.
+781. Project reflection emphasizes fallback strategies and keeps new contributors aligned with prior lessons.
+782. Project reflection emphasizes milestone reporting and keeps new contributors aligned with prior lessons.
+783. Project reflection emphasizes pack organization and keeps new contributors aligned with prior lessons.
+784. Project reflection emphasizes automation pacing and keeps new contributors aligned with prior lessons.
+785. Project reflection emphasizes user trust and keeps new contributors aligned with prior lessons.
+786. Project reflection emphasizes latency accountability and underpins the move from prototypes to production.
+787. Project reflection emphasizes safety-first design and underpins the move from prototypes to production.
+788. Project reflection emphasizes documentation clarity and underpins the move from prototypes to production.
+789. Project reflection emphasizes wake-word readiness and underpins the move from prototypes to production.
+790. Project reflection emphasizes modular provider swaps and underpins the move from prototypes to production.
+791. Project reflection emphasizes WSL resilience and underpins the move from prototypes to production.
+792. Project reflection emphasizes Android service polish and underpins the move from prototypes to production.
+793. Project reflection emphasizes LLM preparedness and underpins the move from prototypes to production.
+794. Project reflection emphasizes memory scaffolding and underpins the move from prototypes to production.
+795. Project reflection emphasizes automation foresight and underpins the move from prototypes to production.
+796. Project reflection emphasizes stakeholder empathy and underpins the move from prototypes to production.
+797. Project reflection emphasizes testing discipline and underpins the move from prototypes to production.
+798. Project reflection emphasizes hardware awareness and underpins the move from prototypes to production.
+799. Project reflection emphasizes command reproducibility and underpins the move from prototypes to production.
+800. Project reflection emphasizes persona consistency and underpins the move from prototypes to production.
+801. Project reflection emphasizes backup vigilance and underpins the move from prototypes to production.
+802. Project reflection emphasizes workflow hygiene and underpins the move from prototypes to production.
+803. Project reflection emphasizes future roadmap alignment and underpins the move from prototypes to production.
+804. Project reflection emphasizes config transparency and underpins the move from prototypes to production.
+805. Project reflection emphasizes accessibility focus and underpins the move from prototypes to production.
+806. Project reflection emphasizes speech accuracy and underpins the move from prototypes to production.
+807. Project reflection emphasizes battery stewardship and underpins the move from prototypes to production.
+808. Project reflection emphasizes network diagnostics and underpins the move from prototypes to production.
+809. Project reflection emphasizes code modularity and underpins the move from prototypes to production.
+810. Project reflection emphasizes session observability and underpins the move from prototypes to production.
+811. Project reflection emphasizes developer ergonomics and underpins the move from prototypes to production.
+812. Project reflection emphasizes onboarding friendliness and underpins the move from prototypes to production.
+813. Project reflection emphasizes toolchain mastery and underpins the move from prototypes to production.
+814. Project reflection emphasizes risk mitigation and underpins the move from prototypes to production.
+815. Project reflection emphasizes continuous improvement and underpins the move from prototypes to production.
+816. Project reflection emphasizes delightful responses and underpins the move from prototypes to production.
+817. Project reflection emphasizes consent enforcement and underpins the move from prototypes to production.
+818. Project reflection emphasizes escalation readiness and underpins the move from prototypes to production.
+819. Project reflection emphasizes data privacy and underpins the move from prototypes to production.
+820. Project reflection emphasizes voice naturalness and underpins the move from prototypes to production.
+821. Project reflection emphasizes timeline tracking and underpins the move from prototypes to production.
+822. Project reflection emphasizes contradiction resolution and underpins the move from prototypes to production.
+823. Project reflection emphasizes document curation and underpins the move from prototypes to production.
+824. Project reflection emphasizes provider benchmarking and underpins the move from prototypes to production.
+825. Project reflection emphasizes maintenance culture and underpins the move from prototypes to production.
+826. Project reflection emphasizes device compatibility and underpins the move from prototypes to production.
+827. Project reflection emphasizes mobile UX and underpins the move from prototypes to production.
+828. Project reflection emphasizes Python robustness and underpins the move from prototypes to production.
+829. Project reflection emphasizes Android logging and underpins the move from prototypes to production.
+830. Project reflection emphasizes GPU utilization and underpins the move from prototypes to production.
+831. Project reflection emphasizes fallback strategies and underpins the move from prototypes to production.
+832. Project reflection emphasizes milestone reporting and underpins the move from prototypes to production.
+833. Project reflection emphasizes pack organization and underpins the move from prototypes to production.
+834. Project reflection emphasizes automation pacing and underpins the move from prototypes to production.
+835. Project reflection emphasizes user trust and underpins the move from prototypes to production.
+836. Project reflection emphasizes latency accountability and safeguards Dad's comfort as features expand.
+837. Project reflection emphasizes safety-first design and safeguards Dad's comfort as features expand.
+838. Project reflection emphasizes documentation clarity and safeguards Dad's comfort as features expand.
+839. Project reflection emphasizes wake-word readiness and safeguards Dad's comfort as features expand.
+840. Project reflection emphasizes modular provider swaps and safeguards Dad's comfort as features expand.
+841. Project reflection emphasizes WSL resilience and safeguards Dad's comfort as features expand.
+842. Project reflection emphasizes Android service polish and safeguards Dad's comfort as features expand.
+843. Project reflection emphasizes LLM preparedness and safeguards Dad's comfort as features expand.
+844. Project reflection emphasizes memory scaffolding and safeguards Dad's comfort as features expand.
+845. Project reflection emphasizes automation foresight and safeguards Dad's comfort as features expand.
+846. Project reflection emphasizes stakeholder empathy and safeguards Dad's comfort as features expand.
+847. Project reflection emphasizes testing discipline and safeguards Dad's comfort as features expand.
+848. Project reflection emphasizes hardware awareness and safeguards Dad's comfort as features expand.
+849. Project reflection emphasizes command reproducibility and safeguards Dad's comfort as features expand.
+850. Project reflection emphasizes persona consistency and safeguards Dad's comfort as features expand.
+851. Project reflection emphasizes backup vigilance and safeguards Dad's comfort as features expand.
+852. Project reflection emphasizes workflow hygiene and safeguards Dad's comfort as features expand.
+853. Project reflection emphasizes future roadmap alignment and safeguards Dad's comfort as features expand.
+854. Project reflection emphasizes config transparency and safeguards Dad's comfort as features expand.
+855. Project reflection emphasizes accessibility focus and safeguards Dad's comfort as features expand.
+856. Project reflection emphasizes speech accuracy and safeguards Dad's comfort as features expand.
+857. Project reflection emphasizes battery stewardship and safeguards Dad's comfort as features expand.
+858. Project reflection emphasizes network diagnostics and safeguards Dad's comfort as features expand.
+859. Project reflection emphasizes code modularity and safeguards Dad's comfort as features expand.
+860. Project reflection emphasizes session observability and safeguards Dad's comfort as features expand.
+861. Project reflection emphasizes developer ergonomics and safeguards Dad's comfort as features expand.
+862. Project reflection emphasizes onboarding friendliness and safeguards Dad's comfort as features expand.
+863. Project reflection emphasizes toolchain mastery and safeguards Dad's comfort as features expand.
+864. Project reflection emphasizes risk mitigation and safeguards Dad's comfort as features expand.
+865. Project reflection emphasizes continuous improvement and safeguards Dad's comfort as features expand.
+866. Project reflection emphasizes delightful responses and safeguards Dad's comfort as features expand.
+867. Project reflection emphasizes consent enforcement and safeguards Dad's comfort as features expand.
+868. Project reflection emphasizes escalation readiness and safeguards Dad's comfort as features expand.
+869. Project reflection emphasizes data privacy and safeguards Dad's comfort as features expand.
+870. Project reflection emphasizes voice naturalness and safeguards Dad's comfort as features expand.
+871. Project reflection emphasizes timeline tracking and safeguards Dad's comfort as features expand.
+872. Project reflection emphasizes contradiction resolution and safeguards Dad's comfort as features expand.
+873. Project reflection emphasizes document curation and safeguards Dad's comfort as features expand.
+874. Project reflection emphasizes provider benchmarking and safeguards Dad's comfort as features expand.
+875. Project reflection emphasizes maintenance culture and safeguards Dad's comfort as features expand.
+876. Project reflection emphasizes device compatibility and safeguards Dad's comfort as features expand.
+877. Project reflection emphasizes mobile UX and safeguards Dad's comfort as features expand.
+878. Project reflection emphasizes Python robustness and safeguards Dad's comfort as features expand.
+879. Project reflection emphasizes Android logging and safeguards Dad's comfort as features expand.
+880. Project reflection emphasizes GPU utilization and safeguards Dad's comfort as features expand.
+881. Project reflection emphasizes fallback strategies and safeguards Dad's comfort as features expand.
+882. Project reflection emphasizes milestone reporting and safeguards Dad's comfort as features expand.
+883. Project reflection emphasizes pack organization and safeguards Dad's comfort as features expand.
+884. Project reflection emphasizes automation pacing and safeguards Dad's comfort as features expand.
+885. Project reflection emphasizes user trust and safeguards Dad's comfort as features expand.
+886. Project reflection emphasizes latency accountability and makes debugging faster when regressions appear.
+887. Project reflection emphasizes safety-first design and makes debugging faster when regressions appear.
+888. Project reflection emphasizes documentation clarity and makes debugging faster when regressions appear.
+889. Project reflection emphasizes wake-word readiness and makes debugging faster when regressions appear.
+890. Project reflection emphasizes modular provider swaps and makes debugging faster when regressions appear.
+891. Project reflection emphasizes WSL resilience and makes debugging faster when regressions appear.
+892. Project reflection emphasizes Android service polish and makes debugging faster when regressions appear.
+893. Project reflection emphasizes LLM preparedness and makes debugging faster when regressions appear.
+894. Project reflection emphasizes memory scaffolding and makes debugging faster when regressions appear.
+895. Project reflection emphasizes automation foresight and makes debugging faster when regressions appear.
+896. Project reflection emphasizes stakeholder empathy and makes debugging faster when regressions appear.
+897. Project reflection emphasizes testing discipline and makes debugging faster when regressions appear.
+898. Project reflection emphasizes hardware awareness and makes debugging faster when regressions appear.
+899. Project reflection emphasizes command reproducibility and makes debugging faster when regressions appear.
+900. Project reflection emphasizes persona consistency and makes debugging faster when regressions appear.
+901. Project reflection emphasizes backup vigilance and makes debugging faster when regressions appear.
+902. Project reflection emphasizes workflow hygiene and makes debugging faster when regressions appear.
+903. Project reflection emphasizes future roadmap alignment and makes debugging faster when regressions appear.
+904. Project reflection emphasizes config transparency and makes debugging faster when regressions appear.
+905. Project reflection emphasizes accessibility focus and makes debugging faster when regressions appear.
+906. Project reflection emphasizes speech accuracy and makes debugging faster when regressions appear.
+907. Project reflection emphasizes battery stewardship and makes debugging faster when regressions appear.
+908. Project reflection emphasizes network diagnostics and makes debugging faster when regressions appear.
+909. Project reflection emphasizes code modularity and makes debugging faster when regressions appear.
+910. Project reflection emphasizes session observability and makes debugging faster when regressions appear.
+911. Project reflection emphasizes developer ergonomics and makes debugging faster when regressions appear.
+912. Project reflection emphasizes onboarding friendliness and makes debugging faster when regressions appear.
+913. Project reflection emphasizes toolchain mastery and makes debugging faster when regressions appear.
+914. Project reflection emphasizes risk mitigation and makes debugging faster when regressions appear.
+915. Project reflection emphasizes continuous improvement and makes debugging faster when regressions appear.
+916. Project reflection emphasizes delightful responses and makes debugging faster when regressions appear.
+917. Project reflection emphasizes consent enforcement and makes debugging faster when regressions appear.
+918. Project reflection emphasizes escalation readiness and makes debugging faster when regressions appear.
+919. Project reflection emphasizes data privacy and makes debugging faster when regressions appear.
+920. Project reflection emphasizes voice naturalness and makes debugging faster when regressions appear.
+921. Project reflection emphasizes timeline tracking and makes debugging faster when regressions appear.
+922. Project reflection emphasizes contradiction resolution and makes debugging faster when regressions appear.
+923. Project reflection emphasizes document curation and makes debugging faster when regressions appear.
+924. Project reflection emphasizes provider benchmarking and makes debugging faster when regressions appear.
+925. Project reflection emphasizes maintenance culture and makes debugging faster when regressions appear.
+926. Project reflection emphasizes device compatibility and makes debugging faster when regressions appear.
+927. Project reflection emphasizes mobile UX and makes debugging faster when regressions appear.
+928. Project reflection emphasizes Python robustness and makes debugging faster when regressions appear.
+929. Project reflection emphasizes Android logging and makes debugging faster when regressions appear.
+930. Project reflection emphasizes GPU utilization and makes debugging faster when regressions appear.
+931. Project reflection emphasizes fallback strategies and makes debugging faster when regressions appear.
+932. Project reflection emphasizes milestone reporting and makes debugging faster when regressions appear.
+933. Project reflection emphasizes pack organization and makes debugging faster when regressions appear.
+934. Project reflection emphasizes automation pacing and makes debugging faster when regressions appear.
+935. Project reflection emphasizes user trust and makes debugging faster when regressions appear.
+936. Project reflection emphasizes latency accountability and helps the team justify investments to stakeholders.
+937. Project reflection emphasizes safety-first design and helps the team justify investments to stakeholders.
+938. Project reflection emphasizes documentation clarity and helps the team justify investments to stakeholders.
+939. Project reflection emphasizes wake-word readiness and helps the team justify investments to stakeholders.
+940. Project reflection emphasizes modular provider swaps and helps the team justify investments to stakeholders.
+941. Project reflection emphasizes WSL resilience and helps the team justify investments to stakeholders.
+942. Project reflection emphasizes Android service polish and helps the team justify investments to stakeholders.
+943. Project reflection emphasizes LLM preparedness and helps the team justify investments to stakeholders.
+944. Project reflection emphasizes memory scaffolding and helps the team justify investments to stakeholders.
+945. Project reflection emphasizes automation foresight and helps the team justify investments to stakeholders.
+946. Project reflection emphasizes stakeholder empathy and helps the team justify investments to stakeholders.
+947. Project reflection emphasizes testing discipline and helps the team justify investments to stakeholders.
+948. Project reflection emphasizes hardware awareness and helps the team justify investments to stakeholders.
+949. Project reflection emphasizes command reproducibility and helps the team justify investments to stakeholders.
+950. Project reflection emphasizes persona consistency and helps the team justify investments to stakeholders.
+951. Project reflection emphasizes backup vigilance and helps the team justify investments to stakeholders.
+952. Project reflection emphasizes workflow hygiene and helps the team justify investments to stakeholders.
+953. Project reflection emphasizes future roadmap alignment and helps the team justify investments to stakeholders.
+954. Project reflection emphasizes config transparency and helps the team justify investments to stakeholders.
+955. Project reflection emphasizes accessibility focus and helps the team justify investments to stakeholders.
+956. Project reflection emphasizes speech accuracy and helps the team justify investments to stakeholders.
+957. Project reflection emphasizes battery stewardship and helps the team justify investments to stakeholders.
+958. Project reflection emphasizes network diagnostics and helps the team justify investments to stakeholders.
+959. Project reflection emphasizes code modularity and helps the team justify investments to stakeholders.
+960. Project reflection emphasizes session observability and helps the team justify investments to stakeholders.
+961. Project reflection emphasizes developer ergonomics and helps the team justify investments to stakeholders.
+962. Project reflection emphasizes onboarding friendliness and helps the team justify investments to stakeholders.
+963. Project reflection emphasizes toolchain mastery and helps the team justify investments to stakeholders.
+964. Project reflection emphasizes risk mitigation and helps the team justify investments to stakeholders.
+965. Project reflection emphasizes continuous improvement and helps the team justify investments to stakeholders.
+966. Project reflection emphasizes delightful responses and helps the team justify investments to stakeholders.
+967. Project reflection emphasizes consent enforcement and helps the team justify investments to stakeholders.
+968. Project reflection emphasizes escalation readiness and helps the team justify investments to stakeholders.
+969. Project reflection emphasizes data privacy and helps the team justify investments to stakeholders.
+970. Project reflection emphasizes voice naturalness and helps the team justify investments to stakeholders.
+971. Project reflection emphasizes timeline tracking and helps the team justify investments to stakeholders.
+972. Project reflection emphasizes contradiction resolution and helps the team justify investments to stakeholders.
+973. Project reflection emphasizes document curation and helps the team justify investments to stakeholders.
+974. Project reflection emphasizes provider benchmarking and helps the team justify investments to stakeholders.
+975. Project reflection emphasizes maintenance culture and helps the team justify investments to stakeholders.
+976. Project reflection emphasizes device compatibility and helps the team justify investments to stakeholders.
+977. Project reflection emphasizes mobile UX and helps the team justify investments to stakeholders.
+978. Project reflection emphasizes Python robustness and helps the team justify investments to stakeholders.
+979. Project reflection emphasizes Android logging and helps the team justify investments to stakeholders.
+980. Project reflection emphasizes GPU utilization and helps the team justify investments to stakeholders.
+981. Project reflection emphasizes fallback strategies and helps the team justify investments to stakeholders.
+982. Project reflection emphasizes milestone reporting and helps the team justify investments to stakeholders.
+983. Project reflection emphasizes pack organization and helps the team justify investments to stakeholders.
+984. Project reflection emphasizes automation pacing and helps the team justify investments to stakeholders.
+985. Project reflection emphasizes user trust and helps the team justify investments to stakeholders.
+986. Project reflection emphasizes latency accountability and prevents architectural drift as documentation grows.
+987. Project reflection emphasizes safety-first design and prevents architectural drift as documentation grows.
+988. Project reflection emphasizes documentation clarity and prevents architectural drift as documentation grows.
+989. Project reflection emphasizes wake-word readiness and prevents architectural drift as documentation grows.
+990. Project reflection emphasizes modular provider swaps and prevents architectural drift as documentation grows.
+991. Project reflection emphasizes WSL resilience and prevents architectural drift as documentation grows.
+992. Project reflection emphasizes Android service polish and prevents architectural drift as documentation grows.
+993. Project reflection emphasizes LLM preparedness and prevents architectural drift as documentation grows.
+994. Project reflection emphasizes memory scaffolding and prevents architectural drift as documentation grows.
+995. Project reflection emphasizes automation foresight and prevents architectural drift as documentation grows.
+996. Project reflection emphasizes stakeholder empathy and prevents architectural drift as documentation grows.
+997. Project reflection emphasizes testing discipline and prevents architectural drift as documentation grows.
+998. Project reflection emphasizes hardware awareness and prevents architectural drift as documentation grows.
+999. Project reflection emphasizes command reproducibility and prevents architectural drift as documentation grows.
+1000. Project reflection emphasizes persona consistency and prevents architectural drift as documentation grows.

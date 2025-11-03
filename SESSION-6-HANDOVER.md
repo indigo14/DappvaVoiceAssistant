@@ -110,7 +110,10 @@ ps aux | grep "python main.py"
 
 ### High Priority (Phase 2)
 1. **LLM Integration**: Session Manager echoes input instead of intelligent responses
-   - Need: Anthropic Claude API integration
+   - Need: Anthropic Claude API integration. Edit from 
+   Mike: Use OpenAI. Openai api key already present, and will also be used for tts, stt
+
+
    - File: `session_manager/llm/` (to be created)
    - Estimated time: 8-12 hours
 
@@ -122,6 +125,7 @@ ps aux | grep "python main.py"
 3. **Wake-Word Detection**: Code exists, but Vosk model not installed
    - Need: Download `vosk-model-small-en-us-0.15.zip` (~50MB)
    - Extract to: `/sdcard/Documents/VCA/models/vosk-model-small-en-us/`
+   Edit from Mike: There is a specialised vosk for wake-word. I want to keep that option open
    - Estimated time: 30 minutes
 
 ### Medium Priority

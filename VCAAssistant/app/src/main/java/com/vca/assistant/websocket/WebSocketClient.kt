@@ -42,11 +42,10 @@ class WebSocketClient(
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 Log.i(TAG, "WebSocket connected successfully!")
+                // Send session_start BEFORE setting CONNECTED state to prevent race condition
+                sendSessionStart()
+                // Now set CONNECTED state - audio can start flowing
                 _connectionState.value = ConnectionState.CONNECTED
-                // Send session_start immediately
-                scope.launch {
-                    sendSessionStart()
-                }
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {

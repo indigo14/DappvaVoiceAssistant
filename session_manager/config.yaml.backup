@@ -155,7 +155,7 @@ logging:
 # PROVIDER SELECTION (Easy switching for experimentation)
 # ============================================================================
 # STT Provider Selection
-stt_provider: "pytorch_whisper"  # Options: openai_whisper, mock_stt, local_whisper, pytorch_whisper
+stt_provider: "openai_whisper"  # Options: openai_whisper, mock_stt, deepgram, local_whisper
 
 # TTS Provider Selection
 tts_provider: "openai_tts"  # Options: openai_tts, mock_tts, elevenlabs, local_piper
@@ -170,27 +170,3 @@ mock_tts:
   mock_latency: 0.3  # Fast mock TTS (0.3 seconds)
   audio_format: "mp3"
   sample_rate: 24000
-
-# Local Whisper Configuration (faster-whisper with CT Translate2)
-# NOTE: GTX 970 Maxwell not fully supported by ctranslate2 for GPU acceleration
-local_whisper:
-  model_size: "small"  # Options: tiny, base, small, medium, large
-  device: "cpu"        # cpu mode (GTX 970 Maxwell limited GPU support)
-  compute_type: "int8"  # int8 works well on CPU
-  language: "en"       # Target language for transcription
-  beam_size: 5         # Beam search size (higher = more accurate but slower)
-  vad_filter: true     # Use Voice Activity Detection filter
-
-# PyTorch Whisper Configuration (OpenAI Whisper with PyTorch - RECOMMENDED for GTX 970)
-# Fully supports GTX 970 Maxwell using FP32 mode
-pytorch_whisper:
-  model_size: "small"  # Options: tiny, base, small, medium, large
-                       # small recommended for GTX 970 (2GB VRAM, 3-4s latency)
-  device: "cuda"       # cuda (GTX 970) or cpu
-  fp16: false          # CRITICAL: Must be false for Maxwell (use FP32 mode)
-                       # Maxwell (GTX 970) is 64x slower at FP16, use FP32 instead
-  language: "en"       # Target language for transcription
-  temperature: 0.0     # 0.0 = deterministic, 0.2-0.4 = more creative/flexible
-  beam_size: 5         # Beam search size (1-10, higher = more accurate but slower)
-  initial_prompt: null  # Optional: "This speech may be slurred or unclear"
-  condition_on_previous_text: true  # Use context from previous utterances
