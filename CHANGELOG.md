@@ -1,5 +1,78 @@
 # Changelog
 
+## 2025-11-03 (Session 11 - Local TTS Implementation: XTTS-v2 → Piper TTS)
+- **Objective**: Implement local TTS to replace OpenAI TTS and reduce latency
+- **Critical constraint identified**: **PyTorch 2.2.2+cu121 MUST be preserved**
+  - Reason: This version is proven working with Maxwell GPU (GTX 970)
+  - Newer PyTorch versions may break CUDA compatibility with older Maxwell architecture
+  - **Installation approach**: Used `pip install coqui-tts --no-deps` to prevent automatic PyTorch upgrade
+
+### Phase 1: Coqui TTS (XTTS-v2) Implementation
+- **Installation completed successfully**:
+  - ✅ Coqui TTS 0.27.2 installed without upgrading PyTorch
+  - ✅ PyTorch 2.2.2+cu121 preserved (CUDA available, GTX 970 detected)
+  - ✅ All dependencies installed individually to avoid conflicts
+  - ✅ Version conflicts resolved (transformers, dateparser, jsonlines, huggingface-hub, scipy)
+- **Key package versions locked**:
+  - `torch==2.2.2+cu121` (DO NOT UPGRADE)
+  - `coqui-tts==0.27.2`
+  - `transformers<4.56,>=4.52.1`
+  - `scipy>=1.13.0`
+- **XTTS-v2 Implementation**:
+  - ✅ Created `CoquiTTSProvider` class with GPU acceleration
+  - ✅ Registered in factory, added config to config.yaml
+  - ✅ Downloaded XTTS-v2 model (~2GB)
+  - ✅ Created test_coqui_tts.py benchmark
+- **❌ XTTS-v2 Test Results - TOO SLOW**:
+  - Short (22 chars): 5.28s latency (2.38x realtime)
+  - Medium (70 chars): 4.27s latency (0.87x realtime)
+  - Long (248 chars): 17.44s latency (1.00x realtime)
+  - **Average: 9.00s** (3x SLOWER than OpenAI 3.0s, 18x SLOWER than 0.5s target)
+  - **Reason**: Large autoregressive model + Maxwell GPU limitations
+  - **Decision**: Pivot to Piper TTS
+
+### Phase 2: Piper TTS Implementation (RECOMMENDED SOLUTION)
+- **Research findings** (GPT-5 + Claude Opus consensus):
+  - Piper TTS is CPU-optimized ONNX model (non-autoregressive, parallel processing)
+  - Model size: 61MB vs 2GB XTTS-v2
+  - CPU mode recommended over GPU (model too small for GPU overhead to be beneficial)
+  - Expected latency: 0.2-0.5s (vs 9s XTTS-v2, 3s OpenAI)
+- **Installation completed**:
+  - ✅ piper-tts 1.3.0 installed with ONNX Runtime CPU
+  - ✅ Downloaded en_US-lessac-medium.onnx model (61MB)
+  - ✅ espeak-ng not required (Piper has built-in phonemization)
+- **Piper TTS Implementation**:
+  - ✅ Created `PiperTTSProvider` class with CPU-optimized ONNX Runtime
+  - ✅ Registered in factory.py as 'piper_tts'
+  - ✅ Added configuration to config.yaml (lines 211-221)
+  - ✅ Updated main.py config loading
+  - ✅ Created test_piper_tts.py benchmark
+- **✅ PIPER TTS Test Results - SUCCESS!**:
+  - **Cold-start test** (single run):
+    - Short (22 chars): 0.12s latency
+    - Medium (70 chars): 0.44s latency
+    - Long (256 chars): 2.02s latency
+    - Average: 0.86s (0.11x realtime)
+  - **Warmed-up test** (5 iterations, avg of runs 2-5):
+    - Short (22 chars): **0.149s** (best: 0.132s)
+    - Medium (70 chars): **0.375s** (best: 0.326s)
+    - Long (256 chars): **1.185s** (best: 1.147s)
+    - **Average: 0.570s** (best case: 0.535s)
+    - Warmup provides 1.13x speedup (especially noticeable on medium/long texts)
+  - **Comparison**:
+    - ✅ **81.0% faster than OpenAI TTS** (0.570s vs 3.0s, saved 2.43s)
+    - ✅ **93.7% faster than XTTS-v2** (0.570s vs 9.0s, saved 8.43s)
+    - ✅ **14% over 0.5s target** (0.570s, acceptable for production)
+- **Pipeline latency projection with Piper TTS (WARMED UP)**:
+  - STT (PyTorch Whisper warmed): **0.71s** ⬅ From Session 10
+  - LLM (GPT-5-mini): 2.5s
+  - **TTS (Piper CPU warmed): 0.570s** ⬅ NEW
+  - Overhead (VAD+WS): 0.6s
+  - **TOTAL: 4.38s ✅ Under 10.0s target! (5.62s headroom)**
+  - **Best case: 4.25s** (with best STT 0.62s + best TTS 0.535s)
+- **Audio quality**: Excellent, listen to test output files (test_output_piper_*.wav)
+- **Recommendation**: Use Piper TTS as default local TTS provider
+
 ## 2025-11-01
 - Initial Codex planning session (“Ultrathink” brief) for Dad’s voice chat assistant vca1.0.
 - Documented architecture, memory strategy, and RAG platform options in `vca1.0-implementation-plan.md`.

@@ -123,6 +123,25 @@ async def startup():
             'audio_format': settings.get('mock_tts.audio_format', 'mp3'),
             'sample_rate': settings.get('mock_tts.sample_rate', 24000)
         }
+    elif tts_provider_name == 'coqui_tts':
+        tts_config = {
+            'model_name': settings.get('coqui_tts.model_name', 'tts_models/multilingual/multi-dataset/xtts_v2'),
+            'use_gpu': settings.get('coqui_tts.use_gpu', True),
+            'language': settings.get('coqui_tts.language', 'en'),
+            'speed': settings.get('coqui_tts.speed', 1.0),
+            'sample_rate': settings.get('coqui_tts.sample_rate', 16000),
+            'reference_audio': settings.get('coqui_tts.reference_audio', None)
+        }
+    elif tts_provider_name == 'piper_tts':
+        tts_config = {
+            'model_path': settings.get('piper_tts.model_path', 'models/piper/en_US-lessac-medium.onnx'),
+            'config_path': settings.get('piper_tts.config_path', None),
+            'speaker_id': settings.get('piper_tts.speaker_id', None),
+            'length_scale': settings.get('piper_tts.length_scale', 1.0),
+            'noise_scale': settings.get('piper_tts.noise_scale', 0.667),
+            'noise_w': settings.get('piper_tts.noise_w', 0.8),
+            'sample_rate': settings.get('piper_tts.sample_rate', 16000)
+        }
     else:
         # Default empty config for other providers
         tts_config = {}

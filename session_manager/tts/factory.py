@@ -27,6 +27,8 @@ import logging
 from .base import TTSProvider
 from .providers.openai_tts import OpenAITTSProvider
 from .providers.mock_tts import MockTTSProvider
+from .providers.coqui_tts import CoquiTTSProvider
+from .providers.piper_tts import PiperTTSProvider
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +40,9 @@ class TTSProviderFactory:
     _providers = {
         'openai_tts': OpenAITTSProvider,
         'mock_tts': MockTTSProvider,
-        # Future providers will be added here:
-        # 'piper': PiperTTSProvider,
+        'coqui_tts': CoquiTTSProvider,  # Session 11: XTTS-v2 local TTS (slow on Maxwell)
+        'piper_tts': PiperTTSProvider,  # Session 11: Piper ONNX local TTS (fast, CPU-optimized)
+        # Future providers:
         # 'elevenlabs': ElevenLabsTTSProvider,
     }
 

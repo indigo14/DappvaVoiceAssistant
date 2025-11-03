@@ -158,7 +158,7 @@ logging:
 stt_provider: "pytorch_whisper"  # Options: openai_whisper, mock_stt, local_whisper, pytorch_whisper
 
 # TTS Provider Selection
-tts_provider: "openai_tts"  # Options: openai_tts, mock_tts, elevenlabs, local_piper
+tts_provider: "openai_tts"  # Options: openai_tts, mock_tts, coqui_tts, piper_tts
 
 # Mock Provider Configuration (for testing without API calls)
 mock_stt:
@@ -194,3 +194,28 @@ pytorch_whisper:
   beam_size: 5         # Beam search size (1-10, higher = more accurate but slower)
   initial_prompt: null  # Optional: "This speech may be slurred or unclear"
   condition_on_previous_text: true  # Use context from previous utterances
+
+# Coqui TTS Configuration (XTTS-v2 - Session 11)
+# Local neural TTS with PyTorch CUDA acceleration for GTX 970 Maxwell
+# Uses same PyTorch 2.2.2+cu121 stack as Whisper STT (DO NOT UPGRADE)
+coqui_tts:
+  model_name: "tts_models/multilingual/multi-dataset/xtts_v2"  # XTTS-v2 model (~2GB)
+  use_gpu: true         # Leverage existing PyTorch CUDA stack (GTX 970 FP32 mode)
+  language: "en"        # Target language for synthesis
+  speed: 1.0            # Speech speed (1.0 = normal, adjust for Warren's preference)
+  sample_rate: 16000    # VCA expects 16kHz (XTTS native is 24kHz, auto-resampled)
+  reference_audio: null # Optional: Path to audio file for voice cloning
+                        # Example: "data/reference_voices/dad_voice.wav"
+                        # Leave null for default XTTS voices
+
+# Piper TTS Configuration (Session 11 - RECOMMENDED)
+# Fast, lightweight local TTS using ONNX Runtime (CPU-optimized)
+# Expected latency: 0.2-0.5s (vs 3.0s OpenAI, 9.0s XTTS-v2)
+piper_tts:
+  model_path: "models/piper/en_US-lessac-medium.onnx"  # 61MB model
+  config_path: "models/piper/en_US-lessac-medium.onnx.json"  # Auto-detected if not specified
+  speaker_id: null      # Optional: For multi-speaker models
+  length_scale: 1.0     # Speed control (1.0 = normal, <1.0 = faster, >1.0 = slower)
+  noise_scale: 0.667    # Variability in synthesis (0.0-1.0)
+  noise_w: 0.8          # Phoneme duration variability (0.0-1.0)
+  sample_rate: 16000    # VCA expects 16kHz (Piper native is 22050Hz, auto-resampled)

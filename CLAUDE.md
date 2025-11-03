@@ -7,3 +7,5 @@ The quirks of Claude working with wsl are documented in Documents/WSL-problems w
 A summary of previous docs is in Doc_Catalogue.md. This may be outdated for most recent docs created
 
 SUMMARY and HANDOVER .md docs should be made. Keep with naming convention SESSION-%-SUMMARY, or SESSION-%-HANDOVER etc. % = next integer available in asceding order
+
+If you need sudo, stop and ask me to sudo. I would prefer that to a less desirable workaround.
